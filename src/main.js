@@ -2,9 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios';
+import qs from 'qs';
 import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
-// import '../static/css/theme-green/index.css';       // 浅绿色主题
+import config from './components/utils/config.js';
+import util from './components/utils/common-function.js';
+// import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
+import './assets/css/theme-green/index.css';   // 浅绿色主题
 import './assets/css/icon.css';
 import './components/common/directives';
 import "babel-polyfill";
@@ -14,7 +17,25 @@ Vue.use(ElementUI, {
     size: 'small'
 });
 Vue.prototype.$axios = axios;
-
+Vue.prototype.$jsonAxios = axios.create({
+	baseURL : config.baseUrl,
+	withCredentials : true,
+	transformRequest : [function(data,header){
+		//TODO 这里可以移除空的数据,以及添加token
+		return data;
+	}]
+});
+Vue.prototype.$formDataAxios = axios.create({
+	baseURL : config.baseUrl,
+	withCredentials : true,
+	headers:{
+	    'Content-type': 'multipart/form-data'
+	}
+	
+});
+Vue.prototype.$qs = qs;
+Vue.prototype.$urlConfig = config;
+Vue.prototype.$util = util;
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');

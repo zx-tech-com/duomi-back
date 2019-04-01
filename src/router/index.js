@@ -81,6 +81,21 @@ export default new Router({
                     component: resolve => require(['../components/page/Permission.vue'], resolve),
                     meta: { title: '权限测试', permission: true }
                 },
+				{
+				    path: '/banner',
+				    component: resolve => require(['../components/page/banner/banner-list.vue'], resolve),
+				    meta: { title: '轮播图管理' }
+				},
+				{
+				    path: '/food',
+				    component: resolve => require(['../components/page/food/food-list.vue'], resolve),
+				    meta: { title: '菜品管理' }
+				},
+				{
+				    path: '/combo',
+				    component: resolve => require(['../components/page/combo/combo-list.vue'], resolve),
+				    meta: { title: '套餐管理' }
+				},
                 {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
