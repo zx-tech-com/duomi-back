@@ -2,17 +2,24 @@
 import config from './config.js';
 
 const success_code = 200;
+const maxPageSize = 10000;//自定义的最大数目
 
 
 function axiosErrorHandler(error,vue){
 	
-	if (error.response) 
-		vue.$message.error(error.response.status);
-    else if (error.request)
-		vue.$message.error(error.request);
-    else
-      vue.$message('Error', error.message);
-    vue.$message(error.config);
+	try{
+		if (error.response) 
+			vue.$message.error(error.response.status);
+		else if (error.request)
+			vue.$message.error(error.request);
+		else
+		  vue.$message('Error', error.message);
+		vue.$message.error(error.message);
+	}catch(e){
+		vue.$message.error(e);
+	}finally{
+		vue.$root.showLoadingIcon = false;
+	}
 }
 
 function getSuccessHandler(response,vue,property){
@@ -53,10 +60,7 @@ function getFullAttachmentUrl(subUrl){
 
 function checkIfDataSuccess(response){
 	try{
-		if(response.code == success_code)
-			return true;
-		else
-			return false;
+		return response.code == success_code;
 	}catch(e){
 		return false;
 	}
@@ -84,5 +88,6 @@ export default{
 	signleDeleteSuccessHandler,
 	assembleNewParamsWithNoUndefinedNullProperty,
 	checkIfDataSuccess,
-	success_code
+	success_code,
+	maxPageSize
 }

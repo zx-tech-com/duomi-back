@@ -1,5 +1,5 @@
 <template>
-    <div class="table">
+    <div class="table" v-loading="$root.showLoadingIcon">
         <div class="crumbs">
             <el-breadcrumb separator="/">
 				<!-- TODO 修改下图标-->
@@ -84,6 +84,7 @@
 					  ref="editUpload"
 					  list-type="picture-card"
 					  accept = "image/*"
+					  :headers = "$root.headers"
 					  :with-credentials = "withCredentials"
 					  :action="editUrl"
 					  :data = "editData"
@@ -137,6 +138,7 @@
 					  ref="addUpload"
 					  list-type="picture-card"
 					  accept = "image/*"
+					  :headers = "$root.headers"
 					  :with-credentials = "withCredentials"
 					  :action="addUrl"
 					  :data = "addData"
