@@ -20,17 +20,34 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$jsonAxios = axios.create({
 	baseURL : config.baseUrl,
 	withCredentials : true,
+	headers:{
+		'Back-Request':'true'
+	},
+	//这里主要是在发送请求之前 显示loading图标
 	transformRequest : [function(data,header){
-		//TODO 这里可以移除空的数据,以及添加token
+		vue.$data.showLoadingIcon = true;
 		return data;
-	}]
+	}],
+	transformResponse: [function (data) {
+		vue.$data.showLoadingIcon = false;
+		return JSON.parse(data);
+	}],
 });
 Vue.prototype.$formDataAxios = axios.create({
 	baseURL : config.baseUrl,
 	withCredentials : true,
 	headers:{
-	    'Content-type': 'multipart/form-data'
-	}
+	    'Content-type': 'multipart/form-data',
+		'Back-Request':'true'
+	},
+	transformRequest : [function(data,header){
+		vue.$data.showLoadingIcon = true;
+		return data;
+	}],
+	transformResponse: [function (data) {
+		vue.$data.showLoadingIcon = false;
+		return data;
+	}],
 	
 });
 Vue.prototype.$qs = qs;
@@ -38,9 +55,12 @@ Vue.prototype.$urlConfig = config;
 Vue.prototype.$util = util;
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
+	console.log(to);
+	console.log(from);
+	console.log(next);
     const role = localStorage.getItem('ms_username');
-    if (!role && to.path !== '/login') {
-        next('/login');
+    if (!role && to.path !== '/') {
+        next('/');
     } else if (to.meta.permission) {
         // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
         role === 'admin' ? next() : next('/403');
@@ -57,7 +77,13 @@ router.beforeEach((to, from, next) => {
 })
 
 
-new Vue({
+var vue = new Vue({
+	data : {
+		showLoadingIcon : false
+	},
+	headers : {
+		'Back-Request':'true'
+	},
     router,
     render: h => h(App)
 }).$mount('#app')

@@ -1,27 +1,28 @@
 <template>
-    <div class="table">
+    <div class="table" v-loading="$root.showLoadingIcon">
         <div class="crumbs">
             <el-breadcrumb separator="/">
 				<!-- TODO 修改下图标-->
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 菜品列表</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 套餐列表</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
 				<!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="batchDelete">批量删除</el-button> -->
 				
-				<el-select v-model="queryInfo.choosable" placeholder="种类筛选" class="handle-select mr10">
+				<!-- <el-select v-model="queryInfo.choosable" placeholder="种类筛选" class="handle-select mr10">
 				    <el-option v-for="(combo, index) in comboTypes" :key="index" :label="combo" :value="index"></el-option>
-				</el-select>
+				</el-select> -->
 				
-				<el-select v-model="queryInfo.online" placeholder="状态筛选" class="handle-select mr10">
+				<el-select v-model="queryInfo.online" placeholder="上下架筛选" class="handle-select mr10">
 				    <el-option v-for="(online, index) in onlinTypes" :key="index" :label="online" :value="index"></el-option>
 				</el-select>
 				
-				<el-input v-model="queryInfo.query" placeholder="名称筛选" class="handle-input mr10"></el-input>
+				<el-input v-model="queryInfo.query" placeholder="套餐名称筛选" class="handle-input mr10"></el-input>
+				<el-input v-model="queryInfo.description" placeholder="菜品名称筛选" class="handle-input mr10"></el-input>
 				<el-button type="primary" icon="search" @click="getRawComboList">搜索</el-button>
 				
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleAdd">新增菜品</el-button>
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleAdd">新增套餐</el-button>
             </div>
             <el-table :data="data" border class="table">
                 <el-table-column prop="index" label="序号" width="60" align="center"></el-table-column>
@@ -34,9 +35,9 @@
                 <el-table-column prop="cname" label="名称" align="center"></el-table-column>
                 <el-table-column prop="originPrice" label="价格" sortable align="center"></el-table-column>
 				<el-table-column prop="stars" label="好评度" align="center"></el-table-column>
-				<el-table-column prop="sales" label="销量" align="center"></el-table-column>
+				<el-table-column prop="sales" label="销量" sortable align="center"></el-table-column>
 				<el-table-column prop="online" label="状态" align="center"></el-table-column>
-				<el-table-column prop="choosable" label="是否可选" align="center"></el-table-column>
+				<!-- <el-table-column prop="choosable" label="是否可选" align="center"></el-table-column> -->
 				<el-table-column label="操作"  align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -54,38 +55,32 @@
 
 
 		<!-- 编辑弹出框 -->
-		<el-dialog title="修改菜品" :visible.sync="editVisible" width="30%">
+		<el-dialog title="修改套餐" :visible.sync="editVisible" width="30%">
 			<el-form ref="editform" :model="form" :rules="rules" label-width="80px" >
-				<el-form-item label="菜品类型"  prop="choosable" >
-				    <el-select v-model="form.choosable" placeholder="选择菜品类型" class="handle-select mr10">
-				        <el-option v-for="(combo, index) in comboTypes" :key="index" :label="combo" :value="index"></el-option>
-				    </el-select>
+				
+				<el-form-item label="套餐名称"  prop="cname">
+				    <el-input v-model="form.cname"></el-input>
 				</el-form-item>
 				
-				<!-- <el-form-item label="是否上架"  prop="online">
-				    <el-select v-model="form.online" placeholder="默认为上架" class="handle-select mr10">
-						<el-option v-for="(online, index) in onlinTypes" :key="index" :label="online" :value="index"></el-option>
-				    </el-select>
-				</el-form-item> -->
+				<el-form-item label="套餐价格"  prop="originPrice">
+				    <el-input v-model="form.originPrice" placeholder="小数点后最多2位,单位为元"></el-input>
+				</el-form-item>
 				
-			    <el-form-item label="菜品名称"  prop="cname">
-			        <el-input v-model="form.cname"></el-input>
-			    </el-form-item>
-				
-			    <el-form-item label="菜品价格"  prop="originPrice">
-			        <el-input v-model="form.originPrice" placeholder="小数点后最多2位,单位为元"></el-input>
-			    </el-form-item>
+				<el-form-item label="销量"  prop="sales">
+				    <el-input v-model.number="form.sales" placeholder="请输入正整数"></el-input>
+				</el-form-item>
 				
 				<el-form-item label="原图片">
 				    <img :src="form.imgUrl" alt="呀,图片加载不出来" width="200px" height="200px"/>
 				</el-form-item>
 				
-				<el-form-item label="菜品照片"  prop="img">
+				<el-form-item label="套餐照片"  prop="img">
 					<el-upload
 					  class="upload-demo"
 					  ref="editUpload"
 					  list-type="picture-card"
 					  accept = "image/*"
+					  :headers = "$root.headers"
 					  :with-credentials = "withCredentials"
 					  :action="editUrl"
 					  :data = "editData"
@@ -99,6 +94,24 @@
 					  <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
 					</el-upload>
 				</el-form-item>
+				
+				<el-form-item label="主食"  prop="mainFoodSelect" >
+				    <el-select v-model="foodIds[0]" placeholder="选择主食" class="handle-select mr10">
+				        <el-option v-for="(food, index) in mainFoodList" :key="index" :label="food.fname" :value="food.id"></el-option>
+				    </el-select>
+				</el-form-item>
+				
+				<el-form-item label="辅食"  prop="assistFoodSelect" >
+				    <el-select v-model="foodIds[1]" placeholder="选择主食" class="handle-select mr10">
+				       <el-option v-for="(food, index) in assistFoodList" :key="index" :label="food.fname" :value="food.id"></el-option>
+					</el-select>
+				</el-form-item>
+				
+				<el-form-item label="汤羹"  prop="soupFoodSelect" >
+				    <el-select v-model="foodIds[2]" placeholder="选择主食" class="handle-select mr10">
+				        <el-option v-for="(food, index) in soupList" :key="index" :label="food.fname" :value="food.id"></el-option>
+				    </el-select>
+				</el-form-item>
 			</el-form>
 		    <span slot="footer" class="dialog-footer">
 				<div class="footer-center">
@@ -109,15 +122,14 @@
 		</el-dialog>
 
 
-
-        <!-- 新增菜品弹窗 -->
-        <el-dialog title="新增菜品" :visible.sync="addVisible" width="30%">
+        <!-- 新增套餐弹窗 -->
+        <el-dialog title="新增套餐" :visible.sync="addVisible" width="30%">
 			<el-form ref="addform" :model="form" :rules="rules" label-width="80px" >
-				<el-form-item label="菜品类型"  prop="choosable" >
-				    <el-select v-model="form.choosable" placeholder="选择菜品类型" class="handle-select mr10">
+				<!-- <el-form-item label="套餐类型"  prop="choosable" >
+				    <el-select v-model="form.choosable" placeholder="选择套餐类型" class="handle-select mr10">
 				        <el-option v-for="(combo, index) in comboTypes" :key="index" :label="combo" :value="index"></el-option>
 				    </el-select>
-				</el-form-item>
+				</el-form-item> -->
 				
 				<!-- <el-form-item label="是否上架"  prop="online">
 				    <el-select v-model="form.online" placeholder="默认为上架" class="handle-select mr10">
@@ -125,20 +137,25 @@
 				    </el-select>
 				</el-form-item> -->
 				
-			    <el-form-item label="菜品名称"  prop="cname">
+			    <el-form-item label="套餐名称"  prop="cname">
 			        <el-input v-model="form.cname"></el-input>
 			    </el-form-item>
 				
-			    <el-form-item label="菜品价格"  prop="originPrice">
+			    <el-form-item label="套餐价格"  prop="originPrice">
 			        <el-input v-model="form.originPrice" placeholder="小数点后最多2位,单位为元"></el-input>
 			    </el-form-item>
 				
-				<el-form-item label="菜品照片"  prop="img">
+				<el-form-item label="销量"  prop="sales">
+				    <el-input v-model.number="form.sales" placeholder="请输入正整数"></el-input>
+				</el-form-item>
+				
+				<el-form-item label="套餐照片"  prop="img">
 					<el-upload
 					  class="upload-demo"
 					  ref="addUpload"
 					  list-type="picture-card"
 					  accept = "image/*"
+					  :headers = "$root.headers"
 					  :with-credentials = "withCredentials"
 					  :action="addUrl"
 					  :data = "addData"
@@ -152,6 +169,25 @@
 					  <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
 					</el-upload>
 				</el-form-item>
+				
+				<el-form-item label="主食"  prop="mainFoodSelect" >
+				    <el-select v-model="foodIds[0]" placeholder="选择主食" class="handle-select mr10">
+				        <el-option v-for="(food, index) in mainFoodList" :key="index" :label="food.fname" :value="food.id"></el-option>
+				    </el-select>
+				</el-form-item>
+				
+				<el-form-item label="辅食"  prop="assistFoodSelect" >
+				    <el-select v-model="foodIds[1]" placeholder="选择主食" class="handle-select mr10">
+				       <el-option v-for="(food, index) in assistFoodList" :key="index" :label="food.fname" :value="food.id"></el-option>
+					</el-select>
+				</el-form-item>
+				
+				<el-form-item label="汤羹"  prop="soupFoodSelect" >
+				    <el-select v-model="foodIds[2]" placeholder="选择主食" class="handle-select mr10">
+				        <el-option v-for="(food, index) in soupList" :key="index" :label="food.fname" :value="food.id"></el-option>
+				    </el-select>
+				</el-form-item>
+				
 			</el-form>
             <span slot="footer" class="dialog-footer">
 				<div class="footer-center">
@@ -163,7 +199,7 @@
 
         <!-- TODO删除提示框 -->
         <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
-            <div class="del-dialog-cnt">确定要{{onlinTypes[needToChangeOnlineStatusCombo.online]}}该食品吗？</div>
+            <div class="del-dialog-cnt">确定要{{onlinTypes[needToChangeOnlineStatusCombo.online]}}该套餐吗？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delVisible = false">取 消</el-button>
                 <el-button type="primary" @click="deleteRow">确 定</el-button>
@@ -182,13 +218,14 @@
 				addUrl : 'combo/addCombo',
 				editUrl : 'combo/updateCombo',
 				delUrl : 'combo/deleteCombo',
+				listFoodUrl : 'food/listFood',
 				
 				
 				comboTypes : ['主食','辅食','汤羹'],
 				onlinTypes : ['上架','下架'],
 				
 				combos : [],
-				fileName : 'img',
+				fileName : 'file',
 				fileList:[],
 				limit : 1,
 				withCredentials : true,
@@ -200,7 +237,9 @@
 				queryInfo:{//查询条件
 					online : 0,
 					query : '',
-					choosable : ''
+					choosable : '',
+					description : '',//暂存食品名称,用于模糊查询
+					//sales : 15,//暂存食品id,用于查询包含某个食品的套餐
 				},
 				
 				pageInfo:{
@@ -214,7 +253,13 @@
 				validateOnRuleChange : false,
 				
                 form: {//新增或者修改都需要用到
+					choosable : false//默认不可选
                 },		
+				
+				foodIds:[0,0,0],
+				mainFoodList:[],
+				assistFoodList:[],
+				soupList:[],
 				
 				needToChangeOnlineStatusCombo:{
 					online : 1
@@ -240,11 +285,42 @@
 					callback();
 				};
 				
+				var validateSales = (rule, value, callback) => {
+					if (!Number.isInteger(value)) {
+						callback(new Error('请输入数字值'));
+					} else if(value < 0)
+						callback(new Error('必须大于等于0'));
+					callback();
+				  };
+				
+				var mainFoodSelect = (rule, value, callback) => {
+					if (vue.foodIds[0] == 0) {
+					  callback(new Error('请选择主食'));
+					}
+					callback();
+				};
+				
+				var assistFoodSelect = (rule, value, callback) => {
+					if (vue.foodIds[1] == 0) {
+					  callback(new Error('请选择辅食'));
+					}
+					callback();
+				};
+				
+				var soupFoodSelect = (rule, value, callback) => {
+					if (vue.foodIds[2] == 0) {
+					  callback(new Error('请选择汤羹'));
+					}
+					callback();
+				};
+				
 				var finalRules = {//新增,修改都用得到
-					choosable : [{required: true, message: '菜品类型必选', trigger: 'blur'}],
-					online: [{required: true, message: '选择是否上架', trigger: 'blur'}],
-					cname : [{required: true, message: '菜品名称必填', trigger: 'blur'}],
+					cname : [{required: true, message: '套餐名称必填', trigger: 'blur'}],
 					originPrice : [{required: true, message: '价格必填', trigger: 'blur'}],
+					sales : [{ validator: validateSales}],
+					mainFoodSelect : [{ validator: mainFoodSelect}],
+					assistFoodSelect : [{ validator: assistFoodSelect}],
+					soupFoodSelect : [{ validator: soupFoodSelect}]
 				}
 				if(vue.addVisible)//修改是不需要验证图片必须上传的
 					finalRules.img = [{ validator: validateImg}];
@@ -263,7 +339,8 @@
 					   choosable : vue.comboTypes[combo.choosable],
 					   online: vue.onlinTypes[combo.online],
 					   stars : combo.stars,
-					   sales : combo.sales
+					   sales : combo.sales,
+					   foodIds : combo.foods.sort((a,b)=>a.ftype - b.ftype).map(food => food.id)
 				   };
                 })
             },
@@ -271,18 +348,22 @@
 				var vue = this;
 				return {
 					id : vue.form.id,
-					choosable : vue.form.choosable,
+					// choosable : vue.form.choosable,
 					cname : vue.form.cname,
 					originPrice : vue.form.originPrice,
+					sales : vue.form.sales,
+					foodIds : vue.foodIds,
 					// online : vue.form.online
 				}
 			},
 			addData : function(){
 				var vue = this;
 				return {
-					choosable : vue.form.choosable,
+					// choosable : vue.form.choosable,
 					cname : vue.form.cname,
 					originPrice : vue.form.originPrice,
+					sales : vue.form.sales,
+					foodIds : vue.foodIds
 					// online : vue.form.online
 				}
 			}
@@ -294,6 +375,7 @@
 				vue.$jsonAxios.get(finalUrl).then(function(response){
 					//这里只能说明返回的状态码是以2开头的.
 					var data = response.data;
+					console.log(data);
 					if(data.code == vue.$util.success_code){//成功返回列表
 						vue.combos = data.data.data;//特喵的,我自己看着都头大
 						var page = data.data.page;
@@ -311,6 +393,51 @@
                 
             },
 
+			initMainAssistSoupFoods : function(){
+				
+				var vue = this;
+				
+				if(vue.mainFoodList.length > 1)
+					return;
+				
+				var listFoodUrl = vue.listFoodUrl + '?pageSize=' + vue.$util.maxPageSize;//这里最多列举10000个
+				vue.$jsonAxios.get(listFoodUrl).then(function(response){
+					var data = response.data;
+					if(vue.$util.checkIfDataSuccess(data)){//成功
+						vue.assembleMainAssistSoupFoodList(data);
+					}else
+						vue.$message.error("错误码：" + data.code + " " + data.message);
+				}).catch(function(error){
+					console.log(error);
+					vue.$util.axiosErrorHandler(error,vue);
+				})
+				
+				
+			},
+			
+			assembleMainAssistSoupFoodList : function(data){
+				var vue = this;
+				var pleaseSelect = {id:0,fname:'请选择'};
+				try{
+					var foodList = data.data.data;
+					var tempList = foodList.filter(food => food.ftype == 0);
+					tempList.unshift(pleaseSelect);
+					vue.mainFoodList = tempList;
+					
+					tempList = foodList.filter(food => food.ftype == 1);
+					tempList.unshift(pleaseSelect);
+					vue.assistFoodList = tempList;
+					
+					tempList = foodList.filter(food => food.ftype == 2);
+					tempList.unshift(pleaseSelect);
+					vue.soupList = tempList;
+				}catch(e){
+					vue.$message.error('初始化菜品列表失败');
+				}
+				
+				
+			},
+			
 			assembleQueryUrl : function(){
 				var pageInfo = this.pageInfo;
 				var queryInfo = this.queryInfo;
@@ -322,6 +449,8 @@
 
 			handleAdd(){
 				var vue = this;
+				//初始化菜品下拉列表
+				vue.initMainAssistSoupFoods();
 				//清空fileList
 				vue.fileList = [];
 				//重置form
@@ -336,16 +465,21 @@
 
             handleEdit(index, row) {
 				var vue = this;
+				//初始化菜品下拉列表
+				vue.initMainAssistSoupFoods();
                 vue.idx = index;
                 const combo = vue.data[index];
                 vue.form = {
                    id : combo.id,
-                   choosable : vue.comboTypes.indexOf(combo.choosable),
+                   // choosable : vue.comboTypes.indexOf(combo.choosable),
                    cname : combo.cname,
                    originPrice : combo.originPrice,
                    online : vue.onlinTypes.indexOf(combo.online),
-				   imgUrl : combo.imgUrl
+				   imgUrl : combo.imgUrl,
+				   sales : combo.sales,
+				   //TODO 设置foods index
                 }
+				vue.foodIds = combo.foodIds,
 				vue.fileList = [];
                 vue.editVisible = true;
 				vue.$nextTick(function(){//注意需要在visible为true之后调用 emmmmm

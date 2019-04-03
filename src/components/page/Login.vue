@@ -4,19 +4,18 @@
             <div class="ms-title">后台管理系统</div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="username">
+                    <el-input v-model="ruleForm.username" placeholder="请输入账号">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
-                <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
+                <el-form-item prop="passwd">
+                    <el-input type="passwd" placeholder="请输入密码" show-password v-model="ruleForm.passwd" @keyup.enter.native="submitForm('ruleForm')">
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
             </el-form>
         </div>
     </div>
@@ -26,15 +25,16 @@
     export default {
         data: function(){
             return {
+				loginUrl : 'admin/login',
                 ruleForm: {
-                    username: 'admin',
-                    password: '123123'
+                    username: '',
+                    passwd: ''
                 },
                 rules: {
                     username: [
                         { required: true, message: '请输入用户名', trigger: 'blur' }
                     ],
-                    password: [
+                    passwd: [
                         { required: true, message: '请输入密码', trigger: 'blur' }
                     ]
                 }
@@ -42,16 +42,29 @@
         },
         methods: {
             submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
+				var vue = this;
+                vue.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
+						vue.login();
                     } else {
                         console.log('error submit!!');
                         return false;
                     }
                 });
-            }
+            },
+			login : function(){
+				var vue = this;
+				vue.$jsonAxios.post(vue.loginUrl,vue.$qs.stringify(vue.ruleForm)).then(function(response){
+					var data = response.data;
+					if(vue.$util.checkIfDataSuccess(data)){
+						localStorage.setItem('ms_username',vue.ruleForm.username);
+						vue.$router.push('/dashboard');//进入首页
+					}else
+						vue.$message.error("错误码：" + data.code + " " + data.message);
+				}).catch(function(error){
+					vue.$util.axiosErrorHandler(error,vue);
+				})
+			}
         }
     }
 </script>
