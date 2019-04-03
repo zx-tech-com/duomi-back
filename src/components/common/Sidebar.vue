@@ -136,7 +136,12 @@
 						icon: 'el-icon-lx-home',
 						index: 'combo',
 						title: '套餐管理'
-					}
+					},
+					{
+						icon: 'el-icon-lx-home',
+						index: 'order',
+						title: '订单管理'
+					},
                 ]
             }
         },

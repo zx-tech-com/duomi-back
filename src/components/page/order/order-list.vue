@@ -3,45 +3,47 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
 				<!-- TODO 修改下图标-->
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 菜品列表</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> 订单列表</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
 				<!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="batchDelete">批量删除</el-button> -->
 				
-				<el-select v-model="queryInfo.ftype"  placeholder="种类筛选" class="handle-select mr10">
-				    <el-option v-for="(food, index) in foodTypes" :key="index" :label="food" :value="index"></el-option>
+				<el-select v-model="queryInfo.comboId" placeholder="种类筛选" class="handle-select mr10">
+				    <el-option v-for="combom in combo" :key="combom.id" :label="combom.cname" :value="combom.id"></el-option>
 				</el-select>
 				
-				<el-select v-model="queryInfo.online" placeholder="状态筛选" class="handle-select mr10">
-				    <el-option v-for="(online, index) in onlinTypes" :key="index" :label="online" :value="index"></el-option>
-				</el-select>
+
+				<el-date-picker
+				  v-model="salesModel"
+				  type="daterange"
+				  align="right"
+				  unlink-panels
+				  range-separator="至"
+				  start-placeholder="开始日期"
+				  end-placeholder="结束日期"
+				   value-format="yyyy-MM-dd HH:mm:ss"
+				  >
+				</el-date-picker>&nbsp;&nbsp;
+		
 				
 				<el-input v-model="queryInfo.query" placeholder="名称筛选" class="handle-input mr10"></el-input>
-				<el-button type="primary" icon="search" @click="getRawFoodList">搜索</el-button>
+				<el-button type="primary" icon="search" @click="getOrderBy">搜索</el-button>
 				
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleAdd">新增菜品</el-button>
-            </div>
+            </div> 
             <el-table :data="data" border class="table">
                 <el-table-column prop="index" label="序号" width="60" align="center"></el-table-column>
                 <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
-                <el-table-column prop="imgUrl" label="图片" align="center">
-					<template slot-scope="scope">
-					  <img  :src="scope.row.imgUrl" alt="图片加载失败" style="width: 100px;height: 60px">
-					</template>
-                </el-table-column>
-                <el-table-column prop="fname" label="名称" align="center"></el-table-column>
-                <el-table-column prop="price" label="价格" sortable align="center"></el-table-column>
-				<el-table-column prop="ftype" label="类型" align="center"></el-table-column>
-				<el-table-column prop="online" label="状态" align="center"></el-table-column>
-				<el-table-column label="操作"  align="center">
-                    <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button v-if="scope.row.online == '上架'" type="text" icon="el-icon-delete" class="red" @click="updateOnlineStatus(scope.$index, scope.row)">下架</el-button>
-						<el-button v-else type="text" icon="el-icon-edit" @click="updateOnlineStatus(scope.$index, scope.row)">上架</el-button>
-					</template>
-                </el-table-column>
+               
+                <el-table-column prop="name" label="用户名" align="center"></el-table-column>
+				<el-table-column prop="tel" label="联系方式" sortable align="center"></el-table-column>
+				<el-table-column prop="cname" label="套餐名称" sortable align="center"></el-table-column>
+                <el-table-column prop="orderNumber" label="订单号" sortable align="center"></el-table-column>
+				<el-table-column prop="orderTime" label="下单时间" align="center"></el-table-column>
+				<el-table-column prop="endTime" label="最迟团拼时间" align="center"></el-table-column>
+				<el-table-column prop="expectReachTime" label="期望送达时间" align="center"></el-table-column>
+				<el-table-column prop="finalPrice" label="最终价格" align="center"></el-table-column>
             </el-table>
 			<div class="pagination">
 			    <el-pagination background @current-change="pageChange" :page-size="pageInfo.pageSize"
@@ -51,113 +53,10 @@
 
 
 
-		<!-- 编辑弹出框 -->
-		<el-dialog title="修改菜品" :visible.sync="editVisible" width="30%">
-			<el-form ref="editform" :model="form" :rules="rules" label-width="80px" >
-				<el-form-item label="菜品类型"  prop="ftype" >
-				    <el-select v-model="form.ftype" placeholder="选择菜品类型" class="handle-select mr10">
-				        <el-option v-for="(food, index) in foodTypes" :key="index" :label="food" :value="index"></el-option>
-				    </el-select>
-				</el-form-item>
-				
-				<!-- <el-form-item label="是否上架"  prop="online">
-				    <el-select v-model="form.online" placeholder="默认为上架" class="handle-select mr10">
-						<el-option v-for="(online, index) in onlinTypes" :key="index" :label="online" :value="index"></el-option>
-				    </el-select>
-				</el-form-item> -->
-				
-			    <el-form-item label="菜品名称"  prop="fname">
-			        <el-input v-model="form.fname"></el-input>
-			    </el-form-item>
-				
-			    <el-form-item label="菜品价格"  prop="price">
-			        <el-input v-model="form.price" placeholder="小数点后最多2位,单位为元"></el-input>
-			    </el-form-item>
-				
-				<el-form-item label="原图片">
-				    <img :src="form.imgUrl" alt="呀,图片加载不出来" width="200px" height="200px"/>
-				</el-form-item>
-				
-				<el-form-item label="菜品照片"  prop="img">
-					<el-upload
-					  class="upload-demo"
-					  ref="editUpload"
-					  list-type="picture-card"
-					  accept = "image/*"
-					  :with-credentials = "withCredentials"
-					  :action="editUrl"
-					  :data = "editData"
-					  :limit = "limit"
-					  :name = "fileName"
-					  :file-list="fileList"
-					  :on-error="editError"
-					  :on-success="editSuccess"
-					  :on-exceed = "onExceed"
-					  :auto-upload="false">
-					  <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-					</el-upload>
-				</el-form-item>
-			</el-form>
-		    <span slot="footer" class="dialog-footer">
-				<div class="footer-center">
-					<el-button @click="cancelEdit">取 消</el-button>
-					<el-button type="primary" @click="editSubmit">提 交</el-button>
-				</div>
-		    </span>
-		</el-dialog>
+		
 
 
 
-        <!-- 新增菜品弹窗 -->
-        <el-dialog title="新增菜品" :visible.sync="addVisible" width="30%">
-			<el-form ref="addform" :model="form" :rules="rules" label-width="80px" >
-				<el-form-item label="菜品类型"  prop="ftype" >
-				    <el-select v-model="form.ftype" placeholder="选择菜品类型" class="handle-select mr10">
-				        <el-option v-for="(food, index) in foodTypes" :key="index" :label="food" :value="index"></el-option>
-				    </el-select>
-				</el-form-item>
-				
-				<!-- <el-form-item label="是否上架"  prop="online">
-				    <el-select v-model="form.online" placeholder="默认为上架" class="handle-select mr10">
-						<el-option v-for="(online, index) in onlinTypes" :key="index" :label="online" :value="index"></el-option>
-				    </el-select>
-				</el-form-item> -->
-				
-			    <el-form-item label="菜品名称"  prop="fname">
-			        <el-input v-model="form.fname"></el-input>
-			    </el-form-item>
-				
-			    <el-form-item label="菜品价格"  prop="price">
-			        <el-input v-model="form.price" placeholder="小数点后最多2位,单位为元"></el-input>
-			    </el-form-item>
-				
-				<el-form-item label="菜品照片"  prop="img">
-					<el-upload
-					  class="upload-demo"
-					  ref="addUpload"
-					  list-type="picture-card"
-					  accept = "image/*"
-					  :with-credentials = "withCredentials"
-					  :action="addUrl"
-					  :data = "addData"
-					  :limit = "limit"
-					  :name = "fileName"
-					  :file-list="fileList"
-					  :on-error="addError"
-					  :on-success="addSuccess"
-					  :on-exceed = "onExceed"
-					  :auto-upload="false">
-					  <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
-					</el-upload>
-				</el-form-item>
-			</el-form>
-            <span slot="footer" class="dialog-footer">
-				<div class="footer-center">
-					<el-button @click="cancelAdd">取 消</el-button>
-					<el-button type="primary" @click="addSubmit">提 交</el-button>
-				</div>
-            </span>
-        </el-dialog>
 
         <!-- TODO删除提示框 -->
         <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
@@ -170,20 +69,25 @@
     </div>
 </template>
 
+
+
+
 <script>
     export default {
         name: 'basetable',
         data() {
             return {
 				
-				listUrl : 'food/listFood',
+				listUrl : 'order/listAllOrder',
 				addUrl : 'food/addFood',
 				editUrl : 'food/updateFood',
 				delUrl : 'food/deleteFood',
-				foodTypes : ['主食','辅食','汤羹'],
+				listComboUrl : 'combo/listCombo',
+				combo : [],
 				onlinTypes : ['上架','下架'],
-				foods : [],
+				salesModels : [],
 				fileName : 'img',
+				salesModel:[],
 				fileList:[],
 				limit : 1,
 				withCredentials : true,
@@ -191,12 +95,15 @@
 				addVisible:false,
 				editVisible: false,
 				delVisible: false,
-				
 				queryInfo:{//查询条件
-					online : 0,
+					comboId : '',
 					query : '',
-					ftype : ''
+					orderTime:'',
+					endTime:''
+					
 				},
+				
+				
 				
 				pageInfo:{
 					"pageNo": 1,		//形如这种格式
@@ -217,12 +124,16 @@
 
             }
         },
+		
+		
         created() {
 			//初始化轮播图数据
             this.getRawFoodList();
+			this.getComboNameList();
 			//初始化修改轮播图的url地址,因为这里使用element的upload而不是aoixs所以需要手动配置地址
 			this.editUrl = this.$urlConfig.baseUrl + this.editUrl;
 			this.addUrl = this.$urlConfig.baseUrl + this.addUrl;
+			this.listComboUrl = this.$urlConfig.baseUrl + this.listComboUrl;
         },
         computed: {
 			rules : function(){
@@ -244,18 +155,20 @@
 					finalRules.img = [{ validator: validateImg}];
 				return finalRules;
 			},
-			
-            data() {
+            data(){
 				var vue = this;
-                return vue.foods.map((food,index) => {
+                return vue.salesModels.map((salesModels,index) => {
                    return {
 					   index : index + 1,
-					   id : food.id,
-					   imgUrl : vue.$util.getFullAttachmentUrl(food.imgUrl),
-					   fname : food.fname,
-					   price : food.price,
-					   ftype : vue.foodTypes[food.ftype],
-					   online: vue.onlinTypes[food.online]
+					   id : salesModels.id,
+					   name :salesModels.customer.nickname,
+					   tel : salesModels.customer.tel,
+					   cname:salesModels.combo.cname,
+					   orderNumber : salesModels.orderNumber,
+					   orderTime : salesModels.orderTime,
+					   endTime: salesModels.endTime,
+					   expectReachTime:salesModels.expectReachTime,
+					   finalPrice:salesModels.finalPrice
 				   };
                 })
             },
@@ -280,20 +193,26 @@
 			}
         },
         methods: {
+			getOrderBy(){
+				 this.pageInfo.pageNo='1';
+				 this.getRawFoodList();
+			},
+			
             getRawFoodList() {
 				var vue = this;
 				var finalUrl = vue.assembleQueryUrl();
+				console.log("123="+finalUrl);
 				vue.$jsonAxios.get(finalUrl).then(function(response){
 					//这里只能说明返回的状态码是以2开头的.
 					var data = response.data;
 					if(data.code == vue.$util.success_code){//成功返回列表
-						vue.foods = data.data.data;//特喵的,我自己看着都头大
+						vue.salesModels = data.data.data;//特喵的,我自己看着都头大
 						var page = data.data.page;
 						vue.pageInfo = {
 							pageNO : page.pageNO,
 							pageSize : page.pageSize,
 							totalData : page.totalData
-						};
+ 						};
 					}else
 						vue.$message.error("错误码：" + data.code + " " + data.message);
 				}).catch(function(err){
@@ -302,13 +221,34 @@
 				})
                 
             },
+			
+			getComboNameList(){
+				alert("11")
+				var vue = this;
+				vue.$jsonAxios.get(vue.listComboUrl).then(function(response){
+					var data = response.data;
+					if(data.code == vue.$util.success_code){//成功返回列表
+					console.log("111="+data.data.data);
+						vue.combo = data.data.data;//特喵的,我自己看着都头大
+						}else
+							vue.$message.error("错误码：" + data.code + " " + data.message);
+						}).catch(function(err){
+							//console.log(err);
+							vue.$util.axiosErrorHandler(err,vue);
+						})
+					    
+					},
 
 			assembleQueryUrl : function(){
 				var pageInfo = this.pageInfo;
+				console.log("1234="+pageInfo);
+				this.queryInfo.orderTime=this.salesModel[0];
+				this.queryInfo.endTime=this.salesModel[1];
 				var queryInfo = this.queryInfo;
 				var params = {};
 				this.$util.assembleNewParamsWithNoUndefinedNullProperty(params,pageInfo);
 				this.$util.assembleNewParamsWithNoUndefinedNullProperty(params,queryInfo);
+				console.log(params);
 				return this.listUrl + "?" + this.$qs.stringify(params);
 			},
 
@@ -326,24 +266,7 @@
 				})
 			},
 
-            handleEdit(index, row) {
-				var vue = this;
-                vue.idx = index;
-                const food = vue.data[index];
-                vue.form = {
-                   id : food.id,
-                   ftype : vue.foodTypes.indexOf(food.ftype),
-                   fname : food.fname,
-                   price : food.price,
-                   online : vue.onlinTypes.indexOf(food.online),
-				   imgUrl : food.imgUrl
-                }
-				vue.fileList = [];
-                vue.editVisible = true;
-				vue.$nextTick(function(){//注意需要在visible为true之后调用 emmmmm
-					vue.$refs.editform.clearValidate();
-				})
-            },
+         
 			
 			
             updateOnlineStatus(index, row) {

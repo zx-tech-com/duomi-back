@@ -96,6 +96,11 @@ export default new Router({
 				    component: resolve => require(['../components/page/combo/combo-list.vue'], resolve),
 				    meta: { title: '套餐管理' }
 				},
+				{
+				    path: '/order',
+				    component: resolve => require(['../components/page/order/order-list.vue'], resolve),
+				    meta: { title: '订单管理' }
+				},
                 {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
