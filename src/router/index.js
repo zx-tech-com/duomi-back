@@ -19,7 +19,7 @@ export default new Router({
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }
                 },
-                {
+                /* {
                     path: '/icon',
                     component: resolve => require(['../components/page/Icon.vue'], resolve),
                     meta: { title: '自定义图标' }
@@ -80,7 +80,7 @@ export default new Router({
                     path: '/permission',
                     component: resolve => require(['../components/page/Permission.vue'], resolve),
                     meta: { title: '权限测试', permission: true }
-                },
+                }, */
 				{
 				    path: '/banner',
 				    component: resolve => require(['../components/page/banner/banner-list.vue'], resolve),

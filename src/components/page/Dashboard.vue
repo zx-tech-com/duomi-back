@@ -111,7 +111,7 @@
         name: 'dashboard',
         data() {
             return {
-                name: localStorage.getItem('ms_username'),
+                name: sessionStorage.getItem('ms_username'),
                 todoList: [{
                         title: '今天要修复100个bug',
                         status: false,

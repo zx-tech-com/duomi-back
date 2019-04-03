@@ -43,7 +43,7 @@
                         index: 'dashboard',
                         title: '系统首页'
                     },
-                    {
+                   /* {
                         icon: 'el-icon-lx-cascades',
                         index: 'table',
                         title: '基础表格'
@@ -121,19 +121,19 @@
                                 title: '404页面'
                             }
                         ]
-                    },
+                    }, */
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-lxbanner',
 						index: 'banner',
 						title: '轮播图管理'
 					},
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-lxdishes',
 						index: 'food',
 						title: '菜品管理'
 					},
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-lxpackage',
 						index: 'combo',
 						title: '套餐管理'
 					}
