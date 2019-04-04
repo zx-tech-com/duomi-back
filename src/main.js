@@ -58,7 +58,7 @@ router.beforeEach((to, from, next) => {
 	console.log(to);
 	console.log(from);
 	console.log(next);
-    const role = localStorage.getItem('ms_username');
+    const role = sessionStorage.getItem('ms_username');
     if (!role && to.path !== '/') {
         next('/');
     } else if (to.meta.permission) {

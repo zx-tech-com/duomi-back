@@ -57,7 +57,7 @@
 				vue.$jsonAxios.post(vue.loginUrl,vue.$qs.stringify(vue.ruleForm)).then(function(response){
 					var data = response.data;
 					if(vue.$util.checkIfDataSuccess(data)){
-						localStorage.setItem('ms_username',vue.ruleForm.username);
+						sessionStorage.setItem('ms_username',vue.ruleForm.username);
 						vue.$router.push('/dashboard');//进入首页
 					}else
 						vue.$message.error("错误码：" + data.code + " " + data.message);
