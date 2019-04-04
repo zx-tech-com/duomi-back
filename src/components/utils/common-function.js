@@ -1,5 +1,6 @@
 
 import config from './config.js';
+import datetimeUtil from './datetime-utils.js';
 
 const success_code = 200;
 const maxPageSize = 10000;//自定义的最大数目
@@ -81,6 +82,7 @@ function assembleNewParamsWithNoUndefinedNullProperty(destParams,params){
 
 
 
+
 export default{
 	axiosErrorHandler,
 	getSuccessHandler,
@@ -89,5 +91,6 @@ export default{
 	assembleNewParamsWithNoUndefinedNullProperty,
 	checkIfDataSuccess,
 	success_code,
-	maxPageSize
+	maxPageSize,
+	getYMDHmString:datetimeUtil.getYMDHmString
 }
