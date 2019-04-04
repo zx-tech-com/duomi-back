@@ -26,13 +26,11 @@
 				   value-format="yyyy-MM-dd HH:mm:ss"
 				  >
 				</el-date-picker>&nbsp;&nbsp;
-		
-				
 				<el-input v-model="queryInfo.query" placeholder="名称筛选" class="handle-input mr10"></el-input>
 				<el-button type="primary" icon="search" @click="getOrderBy">搜索</el-button>
 				
             </div> 
-            <el-table :data="data" border class="table">
+            <el-table :data="data" border class="table" >
                 <el-table-column prop="index" label="序号" width="60" align="center"></el-table-column>
                 <!-- <el-table-column type="selection" width="60" align="center"></el-table-column> -->
                
@@ -44,7 +42,15 @@
 				<el-table-column prop="endTime" label="最迟团拼时间" align="center"></el-table-column>
 				<el-table-column prop="expectReachTime" label="期望送达时间" align="center"></el-table-column>
 				<el-table-column prop="finalPrice" label="最终价格" align="center"></el-table-column>
+				
+				<el-table-column label="查看所有订单"  align="center">
+				    <template slot-scope="scope">
+				        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					</template>
+				</el-table-column>
+				
             </el-table>
+			
 			<div class="pagination">
 			    <el-pagination background @current-change="pageChange" :page-size="pageInfo.pageSize"
 					layout="prev, pager, next" :total="pageInfo.totalData"></el-pagination>
@@ -67,6 +73,45 @@
             </span>
         </el-dialog>
     </div>
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </template>
 
 
@@ -169,6 +214,7 @@
 					   endTime: salesModels.endTime,
 					   expectReachTime:salesModels.expectReachTime,
 					   finalPrice:salesModels.finalPrice
+
 				   };
                 })
             },
@@ -198,10 +244,26 @@
 				 this.getRawFoodList();
 			},
 			
+			
+			
+			 handleEdit(index, row) {
+				var vue = this;
+				vue.idx = index;
+				const SalesLine = vue.data[index];
+				console.log("1122="+food.id);
+				vue.form = {
+				   id : food.id
+				}
+				vue.fileList = [];
+				vue.editVisible = true;
+// 				vue.$nextTick(function(){//注意需要在visible为true之后调用 emmmmm
+// 					vue.$refs.editform.clearValidate();
+// 				})
+			},
+			
             getRawFoodList() {
 				var vue = this;
 				var finalUrl = vue.assembleQueryUrl();
-				console.log("123="+finalUrl);
 				vue.$jsonAxios.get(finalUrl).then(function(response){
 					//这里只能说明返回的状态码是以2开头的.
 					var data = response.data;
@@ -223,12 +285,10 @@
             },
 			
 			getComboNameList(){
-				alert("11")
 				var vue = this;
 				vue.$jsonAxios.get(vue.listComboUrl).then(function(response){
 					var data = response.data;
 					if(data.code == vue.$util.success_code){//成功返回列表
-					console.log("111="+data.data.data);
 						vue.combo = data.data.data;//特喵的,我自己看着都头大
 						}else
 							vue.$message.error("错误码：" + data.code + " " + data.message);
@@ -241,7 +301,6 @@
 
 			assembleQueryUrl : function(){
 				var pageInfo = this.pageInfo;
-				console.log("1234="+pageInfo);
 				this.queryInfo.orderTime=this.salesModel[0];
 				this.queryInfo.endTime=this.salesModel[1];
 				var queryInfo = this.queryInfo;
