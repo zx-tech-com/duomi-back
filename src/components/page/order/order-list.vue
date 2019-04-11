@@ -30,25 +30,31 @@
 				<el-button type="primary" icon="search" @click="getOrderBy">搜索</el-button>
 				
             </div> 
-            <el-table :data="data" border class="table" @expand-change="getSalesOrderLine">
-                <el-table-column label="展开" width="60" type="expand" :expand-change="getSalesOrderLine">
+            <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"  ref="salesOrderTable" :data="data" border class="table" row-key="id" @expand-change="getSalesOrderLine">
+                <el-table-column label="展开" width="60" type="expand">
 					
-					<!-- <template slot-scope="props">
-						<el-table :data="[{}]" border class="table" >
+					<template slot-scope="props">
+						<el-table  :row-style="{'background-color': 'rgba(7,196,168,0.1)'}" :data="props.row.salesOrderLines" row-key="id" border class="table" >
 							<el-table-column prop="index" label="序号" width="60" align="center"></el-table-column>
+							<el-table-column prop="customer.nickname" label="用户" align="center"></el-table-column>
+							<el-table-column prop="orderTime" label="下单时间" align="center"></el-table-column>
+							<el-table-column prop="combo.cname" label="套餐" align="center"></el-table-column>
+							<el-table-column prop="payRecord.status" label="支付状态" align="center"></el-table-column>
+							<el-table-column prop="payRecord.amount" label="支付金额" align="center"></el-table-column>
+							<el-table-column prop="payRecord.useDomidou" label="使用哆咪豆" align="center"></el-table-column>
 						</el-table>
-					</template> -->
+					</template>
 					
 				</el-table-column>
 				<el-table-column prop="index" label="序号" width="60" align="center"></el-table-column>
-                <el-table-column prop="name" label="发起人用户名" align="center"></el-table-column>
-				<el-table-column prop="tel" label="联系方式" sortable align="center"></el-table-column>
+                <el-table-column prop="name" label="发起人用户名" width="110" align="center"></el-table-column>
+				<el-table-column prop="tel" label="联系方式" width="110"  sortable align="center"></el-table-column>
 				<el-table-column prop="cname" label="套餐名称" sortable align="center"></el-table-column>
                 <el-table-column prop="orderNumber" label="订单号" sortable align="center"></el-table-column>
-				<el-table-column prop="orderTime" label="下单时间" align="center"></el-table-column>
-				<el-table-column prop="orderType" label="订单类型" align="center"></el-table-column>
-				<el-table-column prop="expectReachTime" label="期望送达时间" align="center"></el-table-column>
-				<el-table-column prop="finalPrice" label="最终价格(元)" align="center"></el-table-column>
+				<el-table-column prop="orderTime" label="下单时间" width="140" align="center"></el-table-column>
+				<el-table-column prop="orderType" label="订单类型" width="100"  align="center"></el-table-column>
+				<el-table-column prop="expectReachTime" label="期望送达时间" width="140" align="center"></el-table-column>
+				<el-table-column prop="finalPrice" label="最终价格(元)" width="110" align="center"></el-table-column>
 				
 				<!-- <el-table-column label="查看所有订单"  align="center">
 				    <template slot-scope="scope">
@@ -89,10 +95,8 @@
             return {
 				
 				listUrl : 'order/listAllOrder',
-				addUrl : 'food/addFood',
-				editUrl : 'food/updateFood',
-				delUrl : 'food/deleteFood',
 				listComboUrl : 'combo/listCombo',
+				listSalesOrderLine : 'order/listSalesOrderLine',
 				combo : [],
 				onlinTypes : ['上架','下架'],
 				salesModels : [],
@@ -125,13 +129,16 @@
 				
 				validateOnRuleChange : false,
 				
-                form: {//新增或者修改都需要用到
-                },		
+               /* form: {//新增或者修改都需要用到
+                }, */		
 				
-				needToChangeOnlineStatusFood:{
+				/* needToChangeOnlineStatusFood:{
 					online : 1
-				}//点击上架，下架按钮所暂存的数据.
-
+				}//点击上架，下架按钮所暂存的数据. */
+				
+				salesOrderLineMap:new Map(),
+				currentSalesOrderLine : [],
+				payStatus : ['未支付','已支付','退款中','退款成功']
             }
         },
 		
@@ -150,7 +157,7 @@
             data(){
 				var vue = this;
                 return vue.salesModels.map((salesModels,index) => {
-                   return {
+					var order = {
 					   index : index + 1,
 					   id : salesModels.id,
 					   name :salesModels.customer.nickname,
@@ -158,20 +165,55 @@
 					   cname:salesModels.combo.cname,
 					   orderNumber : salesModels.orderNumber,
 					   orderTime : vue.$util.getYMDHmString(salesModels.orderTime),
-					   orderType: salesModels.groupNumber + '人(' + ['团拼','个人单'][salesModels.status] + ')',//显示是否是团拼和总共拼团人数
+					   orderType: salesModels.groupNumber + '人(' + ['团拼','个人'][salesModels.status] + ')',//显示是否是团拼和总共拼团人数
 					   expectReachTime:vue.$util.getYMDHmString(salesModels.expectReachTime),
 					   finalPrice:salesModels.finalPrice
-				   };
+				   }
+				   if(!!salesModels.salesOrderLines){//有值
+						order.salesOrderLines = salesModels.salesOrderLines.map((salesOrderLine,index)=>{
+							if(!salesOrderLine.payRecordModel)
+								salesOrderLine.payRecordModel = {
+									status : 0
+								};
+							return {
+								index : index + 1,
+								
+								id:salesOrderLine.id,
+								orderTime : vue.$util.getYMDHmString(salesOrderLine.orderTime),
+								leaderOrderFlag : salesOrderLine.leaderOrderFlag,
+								counts : salesOrderLine.counts,
+								
+								customer : {
+									id : salesOrderLine.customer.id,
+									avatarUrl : salesOrderLine.customer.avatarUrl,
+									nickname : salesOrderLine.customer.nickname
+								},
+								combo:{
+									id : salesOrderLine.combo.id,
+									cname : salesOrderLine.combo.cname
+								},
+								payRecord:{
+									status : vue.payStatus[salesOrderLine.payRecordModel.status],
+									amount : salesOrderLine.payRecordModel.amount,
+									useDomidou : salesOrderLine.payRecordModel.useDomidou
+								},
+							}
+						});
+				   }
+                   return order;
                 })
             }
         },
         methods: {
+			
+			subTableClass : function(){
+				return 'sub-table';
+			},
+			
 			getOrderBy(){
 				 this.pageInfo.pageNo='1';
 				 this.getRawOrderList();
 			},
-			
-			
 			
 			handleEdit(index, row) {
 				var vue = this;
@@ -235,7 +277,6 @@
 				var params = {};
 				this.$util.assembleNewParamsWithNoUndefinedNullProperty(params,pageInfo);
 				this.$util.assembleNewParamsWithNoUndefinedNullProperty(params,queryInfo);
-				console.log(params);
 				return this.listUrl + "?" + this.$qs.stringify(params);
 			},
 			
@@ -246,7 +287,27 @@
 			},
 			
 			getSalesOrderLine : function(row,expanded){
-				console.log(expanded);
+				var vue = this;
+				if(!row.salesOrderLines){//没有值
+					vue.fetchFromBackEnd(row.id);
+				}
+					
+			},
+			fetchFromBackEnd : function(id){
+				var vue = this;
+				var url = vue.listSalesOrderLine + "?salesOrderId="  + id;
+				vue.$jsonAxios.get(url).then(function(response){
+					var data = response.data;
+					if(vue.$util.checkIfDataSuccess(data)){
+						vue.salesModels.forEach(function(salesOrder){
+							if(salesOrder.id === id)
+								salesOrder.salesOrderLines = data.data;
+						})
+					}else
+						vue.$message.error("错误码：" + data.code + " " + data.message);
+				}).catch(function(error){
+					vue.$util.axiosErrorHandler();
+				})
 			}
 			
 		}
@@ -258,6 +319,11 @@
     .handle-box {
         margin-bottom: 20px;
     }
+
+
+	.sub-table{
+		background-color: rgba(7,196,168,0.5)
+	}
 
     .handle-select {
         width: 120px;

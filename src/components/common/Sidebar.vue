@@ -43,6 +43,36 @@
                         index: 'dashboard',
                         title: '系统首页'
                     },
+					{
+						icon: 'el-icon-lx-home',
+						index: 'duomi-address',
+						title: '投放点管理',
+						subs:[
+							{
+							    index: 'duomi',
+							    title: '新增投放点'
+							},
+							{
+							    index: 'duomi-place-list',
+							    title: '投放点列表'
+							}
+						]
+					},
+					{
+						icon: 'el-icon-lx-home',
+						index: 'customer-address',
+						title: '用户地址管理',
+						subs:[
+							{
+							    index: 'customer',
+								title: '用户地址'
+							},
+							{
+							    index: 'customer-place-list',
+							    title: '用户地址列表'
+							}
+						]
+					},
                    /* {
                         icon: 'el-icon-lx-cascades',
                         index: 'table',

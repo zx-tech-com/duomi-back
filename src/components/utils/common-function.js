@@ -4,6 +4,7 @@ import datetimeUtil from './datetime-utils.js';
 
 const success_code = 200;
 const maxPageSize = 10000;//自定义的最大数目
+const maxDistance = 9999;//最大距离
 
 
 function axiosErrorHandler(error,vue){
@@ -73,12 +74,22 @@ function checkIfDataSuccess(response){
 function assembleNewParamsWithNoUndefinedNullProperty(destParams,params){
 	if(typeof params == 'object'){
 		for(var key in params){
-			if((params[key]!='' && !!params[key]) || params[key] === 0) // !!''这货竟然返回true,你敢信?
+			if((params[key]!='' && !!params[key]) || params[key] === 0) // !!''结果为true
 				destParams[key] = params[key];
 		}
 	}
-	console.log(destParams);
 }
+
+/**
+ * 递归遍历
+ */
+/* function assembleNewParamsWithNoUndefinedNullPropertyRecurse(destParams,params){
+	if(typeof params == 'object'){//对象
+		for(var key in params){
+			assembleNewParamsWithNoUndefinedNullPropertyRecurse();
+		}
+	}
+} */
 
 
 
@@ -92,5 +103,6 @@ export default{
 	checkIfDataSuccess,
 	success_code,
 	maxPageSize,
+	maxDistance,
 	getYMDHmString:datetimeUtil.getYMDHmString
 }

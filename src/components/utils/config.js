@@ -1,6 +1,6 @@
 const protocol = "http";
-//const ip = '192.168.1.177';
-const ip = 'localhost';
+const ip = '192.168.1.177';
+// const ip = 'localhost';
 const port = '9090';
 const context = "duomi"
 

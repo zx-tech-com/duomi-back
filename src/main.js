@@ -16,7 +16,6 @@ Vue.config.productionTip = false
 Vue.use(ElementUI, {
     size: 'small'
 });
-Vue.prototype.$axios = axios;
 Vue.prototype.$jsonAxios = axios.create({
 	baseURL : config.baseUrl,
 	withCredentials : true,
@@ -33,31 +32,20 @@ Vue.prototype.$jsonAxios = axios.create({
 		return JSON.parse(data);
 	}],
 });
-Vue.prototype.$formDataAxios = axios.create({
+Vue.prototype.$jaxios = axios.create({
 	baseURL : config.baseUrl,
 	withCredentials : true,
 	headers:{
-	    'Content-type': 'multipart/form-data',
+		"Content-type":"application/json",
 		'Back-Request':'true'
 	},
-	transformRequest : [function(data,header){
-		vue.$data.showLoadingIcon = true;
-		return data;
-	}],
-	transformResponse: [function (data) {
-		vue.$data.showLoadingIcon = false;
-		return data;
-	}],
-	
+
 });
 Vue.prototype.$qs = qs;
 Vue.prototype.$urlConfig = config;
 Vue.prototype.$util = util;
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-	console.log(to);
-	console.log(from);
-	console.log(next);
     const role = sessionStorage.getItem('ms_username');
     if (!role && to.path !== '/') {
         next('/');

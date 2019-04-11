@@ -182,7 +182,7 @@
 				addUrl : 'food/addFood',
 				editUrl : 'food/updateFood',
 				delUrl : 'food/deleteFood',
-				foodTypes : ['主食','辅食','汤羹'],
+				foodTypes : ['主食','辅食','汤羹','加价送'],
 				onlinTypes : ['上架','下架'],
 				foods : [],
 				fileName : 'img',

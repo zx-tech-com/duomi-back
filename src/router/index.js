@@ -19,6 +19,16 @@ export default new Router({
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }
                 },
+				{
+				    path: 'duomi',
+				    component: resolve => require(['../components/page/address/duomi-place.vue'], resolve),
+				    meta: { title: '投放点' }
+				},
+				{
+				    path: 'customer',
+				    component: resolve => require(['../components/page/address/customer-place.vue'], resolve),
+				    meta: { title: '用户地址' }
+				},
                 /* {
                     path: '/icon',
                     component: resolve => require(['../components/page/Icon.vue'], resolve),
