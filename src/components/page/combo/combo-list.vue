@@ -102,13 +102,13 @@
 				</el-form-item>
 				
 				<el-form-item label="辅食"  prop="assistFoodSelect" >
-				    <el-select v-model="foodIds[1]" placeholder="选择主食" class="handle-select mr10">
+				    <el-select v-model="foodIds[1]" placeholder="选择辅食" class="handle-select mr10">
 				       <el-option v-for="(food, index) in assistFoodList" :key="index" :label="food.fname" :value="food.id"></el-option>
 					</el-select>
 				</el-form-item>
 				
 				<el-form-item label="汤羹"  prop="soupFoodSelect" >
-				    <el-select v-model="foodIds[2]" placeholder="选择主食" class="handle-select mr10">
+				    <el-select v-model="foodIds[2]" placeholder="选择汤羹" class="handle-select mr10">
 				        <el-option v-for="(food, index) in soupList" :key="index" :label="food.fname" :value="food.id"></el-option>
 				    </el-select>
 				</el-form-item>

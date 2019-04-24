@@ -43,6 +43,12 @@
                         index: 'dashboard',
                         title: '系统首页'
                     },
+					
+					{
+					    icon: 'el-icon-lx-home',
+					    index: 'update-Constant',
+					    title: '常用变量'
+					},
 					{
 						icon: 'el-icon-lx-home',
 						index: 'duomi-address',
@@ -55,6 +61,10 @@
 							{
 							    index: 'duomi-place-list',
 							    title: '投放点列表'
+							},
+							{
+							    index: 'cabinet-list',
+							    title: '储物柜列表'
 							}
 						]
 					},

@@ -25,9 +25,29 @@ export default new Router({
 				    meta: { title: '投放点' }
 				},
 				{
+				    path: 'duomi-place-list',
+				    component: resolve => require(['../components/page/address/duomi-place-list.vue'], resolve),
+				    meta: { title: '投放点' }
+				},
+				{
+				    path: 'cabinet-list',
+				    component: resolve => require(['../components/page/address/cabinet.vue'], resolve),
+				    meta: { title: '投放点柜子' }
+				},
+				{
 				    path: 'customer',
 				    component: resolve => require(['../components/page/address/customer-place.vue'], resolve),
 				    meta: { title: '用户地址' }
+				},
+				{
+				    path: 'customer-place-list',
+				    component: resolve => require(['../components/page/address/customer-place-list.vue'], resolve),
+				    meta: { title: '用户地址' }
+				},
+				{
+				    path: 'update-Constant',
+				    component: resolve => require(['../components/page/updateConstant.vue'], resolve),
+				    meta: { title: '常用变量' }
 				},
                 /* {
                     path: '/icon',
