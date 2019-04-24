@@ -13,14 +13,16 @@
         <el-row :gutter="19">
              <el-col >
                 <el-card shadow="hover">
-                    <schart ref="bar" class="schart" canvasId="bar" :data="comboData" type="bar" :options="comboOptions"></schart>
+					<div v-if="foodData.length == 0">无订单信息</div>
+                    <schart v-else ref="bar" class="schart" canvasId="bar" :data="comboData" type="bar" :options="comboOptions"></schart>
                 </el-card>
             </el-col>
         </el-row>
         <el-row :gutter="19">
             <el-col >
                 <el-card shadow="hover">
-                    <schart ref="bar2" class="schart" canvasId="bar2" :data="foodData" type="bar" :options="foodOptions"></schart>
+					<div v-if="foodData.length == 0">无订单信息</div>
+                    <schart v-else ref="bar2" class="schart" canvasId="bar2" :data="foodData" type="bar" :options="foodOptions"></schart>
                 </el-card>
             </el-col>
         </el-row>
