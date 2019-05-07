@@ -40,8 +40,18 @@
                 items: [
                     {
                         icon: 'el-icon-lx-home',
-                        index: 'dashboard',
-                        title: '系统首页'
+                        index: '1',
+                        title: '实时数据',
+						subs:[
+							{
+							    index: 'foodcombo',
+								title: '套餐准备'
+							},
+							{
+							    index: 'placeinfo',
+							    title: '柜子图'
+							}
+						]
                     },
 					
 					{

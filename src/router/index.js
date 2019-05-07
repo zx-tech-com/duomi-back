@@ -15,10 +15,15 @@ export default new Router({
             meta: { title: '自述文件' },
             children:[
                 {
-                    path: 'dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
+                    path: 'foodcombo',
+                    component: resolve => require(['../components/page/statistic/foodcombo.vue'], resolve),
+                    meta: { title: '食品套餐数据' }
                 },
+				{
+				    path: 'placeinfo',
+				    component: resolve => require(['../components/page/statistic/placeinfo.vue'], resolve),
+				    meta: { title: '柜子图' }
+				},
 				{
 				    path: 'duomi',
 				    component: resolve => require(['../components/page/address/duomi-place.vue'], resolve),
