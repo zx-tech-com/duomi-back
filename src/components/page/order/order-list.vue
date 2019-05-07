@@ -26,9 +26,8 @@
 				  value-format="yyyy-MM-dd HH:mm:ss"
 				  >
 				</el-date-picker>&nbsp;&nbsp;
-				<el-input v-model="queryInfo.query" placeholder="名称筛选" class="handle-input mr10"></el-input>
+				<!-- <el-input v-model="queryInfo.query" placeholder="名称筛选" class="handle-input mr10"></el-input> -->
 				<el-button type="primary" icon="search" @click="getOrderBy">搜索</el-button>
-				
             </div> 
             <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"  ref="salesOrderTable" :data="data" border class="table" row-key="id" @expand-change="getSalesOrderLine">
                 <el-table-column label="展开" width="60" type="expand">
@@ -93,10 +92,10 @@
         name: 'basetable',
         data() {
             return {
-				
 				listUrl : 'order/listAllOrder',
 				listComboUrl : 'combo/listCombo',
 				listSalesOrderLine : 'order/listSalesOrderLine',
+				
 				combo : [],
 				onlinTypes : ['上架','下架'],
 				salesModels : [],
@@ -193,7 +192,7 @@
 									cname : salesOrderLine.combo.cname
 								},
 								payRecord:{
-									status : vue.payStatus[salesOrderLine.payRecordModel.status],
+									status : salesOrderLine.payRecordModel.status,//vue.payStatus[salesOrderLine.payRecordModel.status],
 									amount : salesOrderLine.payRecordModel.amount,
 									useDomidou : salesOrderLine.payRecordModel.useDomidou
 								},

@@ -21,10 +21,10 @@
          <el-row :gutter="19">
              <el-col >
         		 <div class="crumbs">
-        		    <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleAdd">新增菜品</el-button>
+        		    <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
         		 </div>
         		 <el-card shadow="hover">
-        			<el-input placeholder="一次最多可使用多米豆数" v-model="maxUseDoumidou" > </el-input>
+        			<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" style="width: 220px;"> </el-input>
         			</el-card>
             </el-col>
         </el-row>
@@ -33,10 +33,48 @@
 		<el-row :gutter="19">
 		     <el-col >
 				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleAdd">新增菜品</el-button>
+				     <el-button type="primary" icon="delete" class="handle-del mr10" :visible.sync="updateVisible" :rules="rules" @click="updateRate">修改哆咪豆金额换算率</el-button>
 				 </div>
 				 <el-card shadow="hover">
-					<el-input placeholder="请输入换算多米豆数量" v-model="rate" > </el-input>
+					<el-input placeholder="请输入换算哆咪豆数量" v-model="rate" style="width: 220px;"></el-input>
+					&nbsp;<span style="color: red;" >表示{{rate}}个哆咪豆抵扣1块钱</span>
+					</el-card>
+		    </el-col>
+		</el-row>
+		
+		
+		<el-row :gutter="19">
+		     <el-col >
+				 <div class="crumbs">
+				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateRebateRate">修改消耗返哆咪豆数</el-button>
+				 </div>
+				 <el-card shadow="hover">
+					<el-input placeholder="请输入返还哆咪豆数量" v-model="rebateRate" style="width: 220px;"></el-input>
+					&nbsp;<span style="color: red;" >消费返利系数(消费1块钱返还{{rebateRate}}哆咪豆)</span>
+					</el-card>
+		    </el-col>
+		</el-row>
+		
+		<el-row :gutter="19">
+		     <el-col >
+				 <div class="crumbs">
+				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateNewCustomerFlagPrice">修改新用户支付金额</el-button>
+				 </div>
+				 <el-card shadow="hover">
+					<el-input placeholder="请输入新用户支付金额" v-model="newCustomerFlagPrice" style="width: 220px;"></el-input>
+					&nbsp;<span style="color: red;" >新用户只需支付{{newCustomerFlagPrice}}（元）</span>
+					</el-card>
+		    </el-col>
+		</el-row>
+		
+		<el-row :gutter="19">
+		     <el-col >
+				 <div class="crumbs">
+				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxAcceptableDistance">修改搜索查询范围内订单</el-button>
+				 </div>
+				 <el-card shadow="hover">
+					<el-input placeholder="请输入范围距离(m)" v-model="maxAcceptableDistance" style="width: 220px;"></el-input>
+					&nbsp;<span style="color: red;" >默认查找{{maxAcceptableDistance}}米范围内的订单</span>
 					</el-card>
 		    </el-col>
 		</el-row>
@@ -53,11 +91,21 @@
             return {
 				selectDate : '',
 				listUpdateUrl : '/updateConstant/getAllUpdate',
+				updateEndTimeUrl : '/updateConstant/updateEndTime',
+				updateMaxUseDoumidouUrl : '/updateConstant/updateMaxUseDoumidou',
+				updateRateUrl:'/updateConstant/updateRate',
+				updateRebateRateUrl:'/updateConstant/updateRebateRate',				
+				updateMaxAcceptableDistanceUrl:'/updateConstant/updateMaxAcceptableDistance',
+				updateNewCustomerFlagPriceUrl:'/updateConstant/updateNewCustomerFlagPrice',	
 				comboUrl : 'statistic/combo',
 				foodUrl : 'statistic/food',
 				endTime: '',
 				rate: '',
+				updateVisible:false,
 				maxUseDoumidou:'',
+				rebateRate:'',
+				maxAcceptableDistance:'',
+				newCustomerFlagPrice:'',
 				combos : [],
 				foods : [],
 				lists:[]
@@ -67,6 +115,18 @@
             Schart
         },
         computed: {
+			
+			rules : function(){
+				var vue = this;
+				var finalRules = {//新增,修改都用得到
+					endTime : [{required: true, message: '菜品类型必选', trigger: 'blur'}],
+					rate: [{required: true, message: '选择是否上架', trigger: 'blur'}],
+					maxUseDoumidou : [{required: true, message: '菜品名称必填', trigger: 'blur'}],
+					rebateRate : [{required: true, message: '价格必填', trigger: 'blur'}],
+				}
+				return finalRules;
+			},
+			
 			comboOptions : function(){
 				var vue = this;
 				return {
@@ -110,7 +170,6 @@
 
         created(){
             this.handleListener();
-			this.listUpdateUrl = this.$urlConfig.baseUrl + this.listUpdateUrl;
         },
         activated(){
             //this.handleListener();
@@ -153,9 +212,134 @@
 				})
 			},
 			
+			
 			updateEndTime(){
 				var vue = this;
+				var finalUrl = this.updateEndTimeUrl+"?endTime="+vue.endTime+":00";
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})
 			},
+			updateMaxUseDoumidou(){
+				var vue = this;
+				if(vue.maxUseDoumidou == ""){
+					vue.$message.error("哆咪豆数量不能为空");
+					return;
+				}
+				var finalUrl = this.updateMaxUseDoumidouUrl+"?maxUseDoumidou="+vue.maxUseDoumidou;
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})
+				
+			},
+			updateRate(){
+				var vue = this;
+				if(vue.rate == ""){
+					vue.$message.error("哆咪豆数量不能为空");
+					return;
+				}
+				var finalUrl = this.updateRateUrl+"?rate="+vue.rate;
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})
+				
+			},
+			
+			
+			updateMaxAcceptableDistance(){
+				var vue = this;
+				if(vue.maxAcceptableDistance == ""){
+					vue.$message.error("哆咪豆数量不能为空");
+					return;
+				}
+				var finalUrl = this.updateMaxAcceptableDistanceUrl+"?maxAcceptableDistance="+vue.maxAcceptableDistance;
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})				
+			},
+			
+			
+			updateRebateRate(){
+				var vue = this;
+				if(vue.rebateRate == ""){
+					vue.$message.error("哆咪豆数量不能为空");
+					return;
+				}
+				var finalUrl = this.updateRebateRateUrl+"?rebateRate="+vue.rebateRate;
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})				
+			},
+			
+			updateNewCustomerFlagPrice(){
+				var vue = this;
+				if(vue.newCustomerFlagPrice == "" || vue.newCustomerFlagPrice <= 0.00){
+					vue.$message.error("支付金额大于0.00（元）");
+					return;
+				}
+				var finalUrl = this.updateNewCustomerFlagPriceUrl+"?newCustomerFlagPrice="+vue.newCustomerFlagPrice;
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})		
+				
+				
+			},
+			
+			
 			
 			handleAdd(){
 				var vue = this;
@@ -196,7 +380,10 @@
 					vue.lists = data.data;
 					vue.rate = vue.lists.rate;
 					vue.maxUseDoumidou = vue.lists.maxUseDoumidou;
-					vue.endTime = vue.lists.endTime
+					vue.endTime = vue.lists.endTime;
+					vue.rebateRate = vue.lists.rebateRate;
+					vue.maxAcceptableDistance = vue.lists.maxAcceptableDistance;
+					vue.newCustomerFlagPrice = vue.lists.newCustomerFlagPrice;
 			   	}else
 			   		vue.$message.error("错误码：" + data.code + " " + data.message);
 			   }).catch(function(err){

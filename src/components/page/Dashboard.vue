@@ -143,8 +143,8 @@
 				var nextDate = new Date(new Date(date).setDate((new Date(date).getDate()+1)));
 				var endDate = nextDate.getFullYear() + '-' + (nextDate.getMonth()+1) + '-' + (nextDate.getDate());
 				var param = {
-					beginDate : '2018-03-22',//date,
-					endDate : '2020-03-22'//endDate
+					beginDate : date,//date,
+					endDate : endDate//endDate
 				};
 				return '?'+this.$qs.stringify(param);
 			},

@@ -121,7 +121,7 @@
         data() {
             return {
 				
-				url : 'cabinet/listDuomiPlace',
+				url : 'address/listCustomerPlace',
 				editUrl : 'slideShow/updateSlideShow',
 				delUrl : 'slideShow/deleteSlideShow',
 				addUrl : 'slideShow/addSlideShow',
