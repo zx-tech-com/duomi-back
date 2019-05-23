@@ -169,9 +169,9 @@
 						vue.form.cabinetCount = null;
 						vue.form.porderCabinetCount = null;
 						vue.form.combosPerCabinet = null;
-						
-						vue.newDuomiPlaceId = data.data;
+						vue.newDuomiPlaceId = data.data;						
 						vue.$message.success("添加成功！正在自动计算距离,请稍后...");
+						
 						vue.calculateDistance();
 						
 					}else
@@ -180,6 +180,9 @@
 					
 				})
 			},
+			
+			
+			
 			
 			/**
 			 * 计算新添加的投放点和之前添加的用户地址之间的距离
@@ -193,16 +196,20 @@
 					var distanceList = [];
 					for(var customerPlaceRecord of customerPlaceList)
 						distanceList.push(vue.calculateTwoPointDistance(customerPlaceRecord));
+					
+					if(customerPlaceList.length == 0){
+						vue.$message.success("计算距离成功");
+						return;
+					};
 					vue.addDistances(distanceList);
+
 				}).catch(function(error){
 					vue.$message.error("获取用户地址信息失败,无法自动计算距离,请联系开发人员");
 					vue.showLoadingIcon = false;
 				})
 				
 			},
-			
-			
-			
+
 			addDistances : function(distanceList){
 				var vue = this;
 				vue.$jaxios.post(vue.addDistanceUrl,JSON.stringify(distanceList)).then(function(response){
