@@ -9,25 +9,25 @@
 				</div>
 				
 				<el-form ref="placeForm"  class="real-form" :model="form" label-width="60px">
-					<el-form-item label="省:" prop="fname">
+					<el-form-item label="省:" :rules="rules" prop="province">
 						<el-input v-model="form.province"></el-input>
 					</el-form-item>
-					<el-form-item label="市:" prop="price">
+					<el-form-item label="市:" :rules="rules" prop="city">
 						<el-input v-model="form.city" ></el-input>
 					</el-form-item>
-					<el-form-item label="区:">
+					<el-form-item label="区:" :rules="rules" prop="district">
 						<el-input v-model="form.district" ></el-input>
 					</el-form-item>
-					<el-form-item label="街道:">
+					<el-form-item label="街道:" >
 						<el-input v-model="form.street" ></el-input>
 					</el-form-item>
-					<el-form-item label="全称:">
+					<el-form-item label="全称:" :rules="rules" prop="address">
 						<el-input v-model="form.address" ></el-input>
 					</el-form-item>
-					<el-form-item label="纬度:">
+					<el-form-item label="纬度:" >
 						<el-input v-model="form.latitude" :disabled="true"></el-input>
 					</el-form-item>
-					<el-form-item label="经度:">
+					<el-form-item label="经度:" >
 						<el-input v-model="form.longitude" :disabled="true"></el-input>
 					</el-form-item>
 					
@@ -61,6 +61,9 @@
 				},
 				
 				newCustomerPlaceId : -1,
+				rules : [
+					{ required: true, message: '该项必填'}
+				],
 				
 				geocoder: null,
 				map: null,
@@ -166,9 +169,19 @@
 					var duomiPlace = data.data;
 					var distanceList = [];
 					
+					
+					
 					for(var duomiPlaceRecord of duomiPlace)
 						distanceList.push(vue.calculateTwoPointDistance(duomiPlaceRecord));
+					
+					if(duomiPlace.length == 0){
+						vue.$message.success("计算距离成功");
+						return;
+					};
+					
 					vue.addDistances(distanceList);
+
+					// JSON.stringify(duomiPlace)=='[]'
 				}).catch(function(error){
 					vue.$message.error("获取投放点信息失败,无法自动计算距离,请联系开发人员");
 					vue.showLoadingIcon = false;
@@ -180,6 +193,10 @@
 				var vue = this;
 				vue.$jaxios.post(vue.addDistanceUrl,JSON.stringify(distanceList)).then(function(response){
 					var data = response.data;
+					
+					
+					
+					
 					if(vue.$util.checkIfDataSuccess(data)){
 						vue.$message.success("自动计算距离成功！");
 					}else
@@ -211,15 +228,14 @@
 				var vue = this;
 				var promise = new Promise(function(resolve,reject){
 					vue.$jsonAxios.get(vue.listDomiPlaceUrl).then(function(response){
-						var data = response.data;
+						var data = response.data;						
 						if(vue.$util.checkIfDataSuccess(data)){
 							resolve(data);
 						}esle
-							reject(data);
+							reject(data);							
 					}).catch(function(error){
 						reject(error);
 					})
-					
 				});
 				return promise;
 			},
