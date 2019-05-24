@@ -1,82 +1,79 @@
 <template>
     <div v-loading="$root.showLoadingIcon">
-        <el-row :gutter="19">
-             <el-col >
-				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateEndTime">修改团拼截止时间</el-button>
-				 </div>
-				 <el-card shadow="hover">
+        <el-row :gutter="19" >
+             <el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateEndTime">修改团拼截止时间</el-button>						
+					 </div>
+				
 					<el-time-select v-model="endTime" :picker-options="{
 							start: '08:30',
-							step: '00:10',
+							step: '00:30',
 							end: '24:00'
 						  }"
 						 placeholder="选择时间">
 					</el-time-select>
-				 </el-card>
+					&nbsp;<span style="color: red;" >每天{{endTime}}结束当天拼团</span>
+				 </el-card>				 
             </el-col>
-        </el-row>
-		
-		
-         <el-row :gutter="19">
-             <el-col >
-        		 <div class="crumbs">
-        		    <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
-        		 </div>
-        		 <el-card shadow="hover">
-        			<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" style="width: 220px;"> </el-input>
-        			</el-card>
-            </el-col>
-        </el-row>
-		
-		
-		<el-row :gutter="19">
-		     <el-col >
-				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" :visible.sync="updateVisible" :rules="rules" @click="updateRate">修改哆咪豆金额换算率</el-button>
-				 </div>
-				 <el-card shadow="hover">
+			
+			
+			
+			<el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						<el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
+					 </div>
+					<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" style="width: 220px;"> </el-input>
+				&nbsp;<span style="color: red;" >一次最多可使用{{maxUseDoumidou}}个哆咪豆</span>
+				</el-card>
+			</el-col>
+			 <el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						 <el-button type="primary" icon="delete" class="handle-del mr10" :visible.sync="updateVisible" :rules="rules" @click="updateRate">修改哆咪豆金额换算率</el-button>
+					 </div>
 					<el-input placeholder="请输入换算哆咪豆数量" v-model="rate" style="width: 220px;"></el-input>
-					&nbsp;<span style="color: red;" >表示{{rate}}个哆咪豆抵扣1块钱</span>
-					</el-card>
-		    </el-col>
-		</el-row>
+					&nbsp;<span style="color: red;" >{{rate}}个哆咪豆抵扣1块钱</span>
+				</el-card>
+			</el-col>
+			
+			
+			
+        </el-row>
 		
-		
-		<el-row :gutter="19">
-		     <el-col >
-				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateRebateRate">修改消耗返哆咪豆数</el-button>
-				 </div>
-				 <el-card shadow="hover">
+		<el-row :gutter="19" >
+			<el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateRebateRate">修改消耗返哆咪豆数</el-button>
+					 </div>
 					<el-input placeholder="请输入返还哆咪豆数量" v-model="rebateRate" style="width: 220px;"></el-input>
-					&nbsp;<span style="color: red;" >消费返利系数(消费1块钱返还{{rebateRate}}哆咪豆)</span>
-					</el-card>
-		    </el-col>
-		</el-row>
-		
-		<el-row :gutter="19">
-		     <el-col >
-				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateNewCustomerFlagPrice">修改新用户支付金额</el-button>
-				 </div>
-				 <el-card shadow="hover">
+					&nbsp;<span style="color: red;" >消费1块钱返还{{rebateRate}}哆咪豆</span>
+				</el-card>
+			</el-col>
+			
+			<el-col :span="8">
+				<el-card shadow="hover"> 
+					 <div class="crumbs">
+						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateNewCustomerFlagPrice">修改新用户支付金额</el-button>
+					 </div>
 					<el-input placeholder="请输入新用户支付金额" v-model="newCustomerFlagPrice" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >新用户只需支付{{newCustomerFlagPrice}}（元）</span>
-					</el-card>
-		    </el-col>
-		</el-row>
-		
-		<el-row :gutter="19">
-		     <el-col >
-				 <div class="crumbs">
-				     <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxAcceptableDistance">修改搜索查询范围内订单</el-button>
-				 </div>
-				 <el-card shadow="hover">
+				</el-card>
+			</el-col>
+			
+			
+			<el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxAcceptableDistance">修改搜索查询范围内订单</el-button>
+					 </div>
 					<el-input placeholder="请输入范围距离(m)" v-model="maxAcceptableDistance" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >默认查找{{maxAcceptableDistance}}米范围内的订单</span>
 					</el-card>
-		    </el-col>
+			</el-col>
 		</el-row>
 		
     </div>
@@ -215,6 +212,14 @@
 			
 			updateEndTime(){
 				var vue = this;
+				var reg = /^(20|21|22|23|[0-1]\d):[0-5]\d$/;
+				var regExp = new RegExp(reg);
+				console.log(vue.endTime);
+				if(!regExp.test(vue.endTime)){
+					vue.$message.error("请选择正确时间");
+					vue.handleListener();
+					return;
+				}
 				var finalUrl = this.updateEndTimeUrl+"?endTime="+vue.endTime+":00";
 				vue.$jsonAxios.get(finalUrl).then(function(response){
 					//这里只能说明返回的状态码是以2开头的.
@@ -233,6 +238,7 @@
 				var vue = this;
 				if(vue.maxUseDoumidou == ""){
 					vue.$message.error("哆咪豆数量不能为空");
+					vue.handleListener();
 					return;
 				}
 				var finalUrl = this.updateMaxUseDoumidouUrl+"?maxUseDoumidou="+vue.maxUseDoumidou;
@@ -254,6 +260,7 @@
 				var vue = this;
 				if(vue.rate == ""){
 					vue.$message.error("哆咪豆数量不能为空");
+					vue.handleListener();
 					return;
 				}
 				var finalUrl = this.updateRateUrl+"?rate="+vue.rate;
@@ -277,6 +284,7 @@
 				var vue = this;
 				if(vue.maxAcceptableDistance == ""){
 					vue.$message.error("哆咪豆数量不能为空");
+					vue.handleListener();
 					return;
 				}
 				var finalUrl = this.updateMaxAcceptableDistanceUrl+"?maxAcceptableDistance="+vue.maxAcceptableDistance;
@@ -299,6 +307,7 @@
 				var vue = this;
 				if(vue.rebateRate == ""){
 					vue.$message.error("哆咪豆数量不能为空");
+					vue.handleListener();
 					return;
 				}
 				var finalUrl = this.updateRebateRateUrl+"?rebateRate="+vue.rebateRate;
@@ -320,6 +329,7 @@
 				var vue = this;
 				if(vue.newCustomerFlagPrice == "" || vue.newCustomerFlagPrice <= 0.00){
 					vue.$message.error("支付金额大于0.00（元）");
+					vue.handleListener();
 					return;
 				}
 				var finalUrl = this.updateNewCustomerFlagPriceUrl+"?newCustomerFlagPrice="+vue.newCustomerFlagPrice;

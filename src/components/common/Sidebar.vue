@@ -55,12 +55,12 @@
                     },
 					
 					{
-					    icon: 'el-icon-lx-home',
+					    icon: 'el-icon-edit',
 					    index: 'update-Constant',
 					    title: '常用变量'
 					},
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-location',
 						index: 'duomi-address',
 						title: '投放点管理',
 						subs:[
@@ -79,7 +79,7 @@
 						]
 					},
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-location',
 						index: 'customer-address',
 						title: '用户地址管理',
 						subs:[
@@ -188,7 +188,7 @@
 						title: '套餐管理'
 					},
 					{
-						icon: 'el-icon-lx-home',
+						icon: 'el-icon-tickets',
 						index: 'order',
 						title: '订单管理'
 					},
