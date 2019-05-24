@@ -58,7 +58,7 @@
 					var data = response.data;
 					if(vue.$util.checkIfDataSuccess(data)){
 						sessionStorage.setItem('ms_username',vue.ruleForm.username);
-						vue.$router.push('/dashboard');//进入首页
+						vue.$router.push('/foodcombo');//进入首页
 					}else
 						vue.$message.error("错误码：" + data.code + " " + data.message);
 				}).catch(function(error){

@@ -14,6 +14,11 @@
 				<el-table-column prop="cabinetCount" label="柜子总数" align="center" width="140"></el-table-column>
 				<el-table-column prop="combosPerCabinet" label="最大容量" align="center" width="140"></el-table-column>
 				<el-table-column prop="address" label="具体地址" align="center" ></el-table-column>
+				<el-table-column label="操作"  align="center">
+				    <template slot-scope="scope">
+				        <el-button type="text" @click="gotoPlaceInfo(scope.row)">查看订单情况</el-button>
+				    </template>
+				</el-table-column>
             </el-table>
         </div>
 
@@ -293,7 +298,13 @@
 			
 			onExceed : function(){
 				this.$message.error(`最多上传一张,请先删除左边的轮播图`);
+			},
+			
+			gotoPlaceInfo : function(placeInfo){
+				console.log(placeInfo);
+				this.$router.push({ path: '/placeinfo', query: { placeId: placeInfo.id }});
 			}
+			
 		}
     }
 
