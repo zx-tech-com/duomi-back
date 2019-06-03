@@ -10,7 +10,7 @@
 					<el-time-select v-model="endTime" :picker-options="{
 							start: '08:30',
 							step: '00:30',
-							end: '24:00'
+							end: '23:00'
 						  }"
 						 placeholder="选择时间">
 					</el-time-select>
@@ -25,7 +25,7 @@
 					 <div class="crumbs">
 						<el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
 					 </div>
-					<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" style="width: 220px;"> </el-input>
+					<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"> </el-input>
 				&nbsp;<span style="color: red;" >一次最多可使用{{maxUseDoumidou}}个哆咪豆</span>
 				</el-card>
 			</el-col>
@@ -34,7 +34,7 @@
 					 <div class="crumbs">
 						 <el-button type="primary" icon="delete" class="handle-del mr10" :visible.sync="updateVisible" :rules="rules" @click="updateRate">修改哆咪豆金额换算率</el-button>
 					 </div>
-					<el-input placeholder="请输入换算哆咪豆数量" v-model="rate" style="width: 220px;"></el-input>
+					<el-input placeholder="请输入换算哆咪豆数量" v-model="rate" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >{{rate}}个哆咪豆抵扣1块钱</span>
 				</el-card>
 			</el-col>
@@ -49,7 +49,7 @@
 					 <div class="crumbs">
 						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateRebateRate">修改消耗返哆咪豆数</el-button>
 					 </div>
-					<el-input placeholder="请输入返还哆咪豆数量" v-model="rebateRate" style="width: 220px;"></el-input>
+					<el-input placeholder="请输入返还哆咪豆数量" v-model="rebateRate" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >消费1块钱返还{{rebateRate}}哆咪豆</span>
 				</el-card>
 			</el-col>
@@ -59,7 +59,7 @@
 					 <div class="crumbs">
 						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateNewCustomerFlagPrice">修改新用户支付金额</el-button>
 					 </div>
-					<el-input placeholder="请输入新用户支付金额" v-model="newCustomerFlagPrice" style="width: 220px;"></el-input>
+					<el-input placeholder="请输入新用户支付金额" v-model="newCustomerFlagPrice" oninput="value=value.replace(/[^0-9.]/g,'')" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >新用户只需支付{{newCustomerFlagPrice}}（元）</span>
 				</el-card>
 			</el-col>
@@ -70,7 +70,7 @@
 					 <div class="crumbs">
 						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxAcceptableDistance">修改搜索查询范围内订单</el-button>
 					 </div>
-					<el-input placeholder="请输入范围距离(m)" v-model="maxAcceptableDistance" style="width: 220px;"></el-input>
+					<el-input placeholder="请输入范围距离(m)" v-model="maxAcceptableDistance" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"></el-input>
 					&nbsp;<span style="color: red;" >默认查找{{maxAcceptableDistance}}米范围内的订单</span>
 					</el-card>
 			</el-col>

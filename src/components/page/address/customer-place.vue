@@ -174,8 +174,10 @@
 					for(var duomiPlaceRecord of duomiPlace)
 						distanceList.push(vue.calculateTwoPointDistance(duomiPlaceRecord));
 					
+					console.log(duomiPlace.length);
 					if(duomiPlace.length == 0){
 						vue.$message.success("计算距离成功");
+						vue.showLoadingIcon = false;
 						return;
 					};
 					

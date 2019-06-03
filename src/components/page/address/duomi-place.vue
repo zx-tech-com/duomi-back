@@ -199,6 +199,7 @@
 					
 					if(customerPlaceList.length == 0){
 						vue.$message.success("计算距离成功");
+						vue.showLoadingIcon = false;
 						return;
 					};
 					vue.addDistances(distanceList);
