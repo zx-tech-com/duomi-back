@@ -63,7 +63,7 @@
 				return {
 					title: vue.selectDate + ' 需准备的菜品预览',
 					showValue: true,
-					fillColor: 'rgb(7,196,168)',
+					fillColor: 'rgb(123,36,168)',
 					bottomPadding: 30,
 					topPadding: 30
 				};

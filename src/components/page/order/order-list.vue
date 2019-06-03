@@ -172,7 +172,7 @@
 						order.salesOrderLines = salesModels.salesOrderLines.map((salesOrderLine,index)=>{
 							if(!salesOrderLine.payRecordModel)
 								salesOrderLine.payRecordModel = {
-									status : 0
+									status : '待支付'
 								};
 							return {
 								index : index + 1,

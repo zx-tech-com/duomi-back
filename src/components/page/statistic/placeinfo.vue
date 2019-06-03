@@ -2,6 +2,22 @@
 
 <template>
 	<div v-loading="$root.showLoadingIcon">
+		
+		<el-row  :gutter="2">
+		    <el-col >
+				<el-card>
+					<center>
+						<span class="tips">选择运送日期：</span>
+						<el-date-picker  value-format="yyyy-MM-dd" @change="listCabinetInfo" v-model="selectDate" type="date" placeholder="选择日期"></el-date-picker>
+						<span class="tips">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择投放点：</span>
+						<el-select v-model="selectPlaceId" placeholder="选择投放点" @change="listCabinetInfo" class="handle-select mr10">
+						    <el-option v-for="place in placeList" :key="place.id" :label="place.shortName" :value="place.id"></el-option>
+						</el-select>
+					</center>
+				</el-card>
+		    </el-col>
+		</el-row>
+		
 		<el-row v-for="(row,rowIndex) in cabinetData" :key="rowIndex">
 			<el-col :span="span" v-for="(col, colIndex) in row" :key="colIndex">
 				<el-card>
@@ -28,6 +44,9 @@
 		data: function() {
 
 			return {
+				duomiPlaces : [],
+				selectDate : '',
+				selectPlaceId : 57,
 				rawData : [],
 				cols: 8,
 				groupOrder : '0',
@@ -40,9 +59,29 @@
 		},
 		
 		created : function(){
+			this.initselectPlaceId();
+			this.getDuimiPlaceList();
+			this.initSelectedDate();
 			this.listCabinetInfo();
 		},
 		computed: {
+			
+			placeList : function(){
+				var vue = this;
+				return vue.duomiPlaces.map((duomiPlace,index) => {
+				   return {
+					   // index : index + 1,
+					   id : duomiPlace.id,
+					   shortName: duomiPlace.shortName,
+// 					   porderCabinetCount: duomiPlace.porderCabinetCount,
+// 					   cabinetCount: duomiPlace.cabinetCount,
+// 					   combosPerCabinet: duomiPlace.combosPerCabinet,
+// 					   address: duomiPlace.address
+				   };
+				})
+			},
+			
+			
 			span: function() {
 				return (24 / this.cols);
 			},
@@ -52,7 +91,7 @@
 					var line = cabinet.line;
 					var cname = [];
 					var orderNumber = '';
-					var path = vue.path;
+					var path = vue.emptyIcon;
 					if(line == null || line.length == 0){
 // 						cname.push('无');
 // 						orderNumber = '无';
@@ -64,6 +103,7 @@
 								name += l.counts;
 								cname.push(name);
 								path = vue.personalIcon;
+								orderNumber = cabinet.orderNumber;
 							}
 						})
 					}else if(cabinet.orderStatus == vue.groupOrder){//团购订单
@@ -75,6 +115,7 @@
 							name += cabinet.groupNumber;
 							cname.push(name);
 							path = vue.groupIcon;
+							orderNumber = cabinet.orderNumber;
 						}else{
 // 							cname.push('无');
 // 							orderNumber = '无';
@@ -86,7 +127,7 @@
 						cabinetStatus : cabinet.cabinetStatus,
 						orderStatus : cabinet.orderStatus,
 						cname : cname.join("; "),
-						orderNumber : cabinet.orderNumber?cabinet.orderNumber:orderNumber,
+						orderNumber : orderNumber,
 						iconPath : path
 					}
 				});
@@ -111,15 +152,19 @@
 		methods: {
 			
 			listCabinetInfo : function(){
-				var placeId = 47;
-				var deliveryDate = "2019-05-06";
+				var placeId = this.selectPlaceId;
+				var deliveryDate = this.selectDate;
 				var url = "statistic/placeDetail?placeId=" + placeId + "&deliveryDate=" + deliveryDate;
 				var vue = this;
 				vue.$jsonAxios.get(url).then(function(response){
 					var data = response.data;
 					if(vue.$util.checkIfDataSuccess(data)){
-						if(data.data)
-							vue.rawData = data.data;
+						var cabinetArr = data.data;
+						if(cabinetArr){
+							cabinetArr.sort(function(a,b){return a.id - b.id});
+							vue.rawData = cabinetArr;
+						}
+							
 						else
 							vue.rawData = [];
 					}else
@@ -127,6 +172,30 @@
 				}).catch(function(error){
 					vue.$util.axiosErrorHandler(error);
 				})
+			},
+			initSelectedDate : function(){
+				var date = new Date();
+				var month = date.getMonth() + 1;
+				if(month < 10)
+					month = '0' + month;
+				this.selectDate = date.getFullYear() + '-' + month + '-' + (date.getDate()+1);
+			},
+			
+			getDuimiPlaceList() {
+				var vue = this;
+				var url = 'cabinet/listDuomiPlace';
+				vue.$jsonAxios.get(url).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					vue.$util.getSuccessHandler(response,vue,"duomiPlaces");
+				}).catch(function(err){
+					vue.$util.axiosErrorHandler(err,vue);
+				})
+			    
+			},
+			initselectPlaceId(){
+				var placeId = this.$route.query.placeId;
+				if(!!placeId)
+					this.selectPlaceId = placeId;
 			}
 			
 			
@@ -157,5 +226,9 @@
 	
 	.el-card__body {
 		padding: 20px 5px !important;
+	}
+	.tips{
+		font-family: "Microsoft YaHei";
+		font-size: 15px;
 	}
 </style>

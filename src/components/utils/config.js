@@ -6,7 +6,7 @@ const protocol = "http";
 const ip = '39.98.204.123';
 const port = '8080';
 
-const context = "duomi"
+const context = "duomi";
 
 const baseUrl = protocol + "://" + ip + ":" + port + "/" + context + "/";
 
