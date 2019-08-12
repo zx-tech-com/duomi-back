@@ -177,6 +177,7 @@
 						index: 'banner',
 						title: '轮播图管理'
 					},
+					
 					{
 						icon: 'el-icon-lxdishes',
 						index: 'food',
@@ -191,6 +192,11 @@
 						icon: 'el-icon-tickets',
 						index: 'order',
 						title: '订单管理'
+					},
+					{
+						icon: 'el-icon-date',
+						index: 'feedBack',
+						title: '意见与反馈'
 					},
                 ]
             }

@@ -18,17 +18,23 @@
 				 </el-card>				 
             </el-col>
 			
-			
-			
 			<el-col :span="8">
 				<el-card shadow="hover">
 					 <div class="crumbs">
-						<el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
-					 </div>
-					<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"> </el-input>
-				&nbsp;<span style="color: red;" >一次最多可使用{{maxUseDoumidou}}个哆咪豆</span>
-				</el-card>
+						 <el-button type="primary" icon="delete" class="handle-del mr10" @click="updateEstimatedTimeOFDelivery">修改套餐送达时间</el-button>						
+					 </div>				
+					<el-time-select v-model="estimatedTimeOFDelivery" :picker-options="{
+							start: '04:00',
+							step: '00:30',
+							end: '09:00'
+						  }"
+						 placeholder="选择时间">
+					</el-time-select>
+					&nbsp;<span style="color: red;" >每天{{estimatedTimeOFDelivery}}送达指定地点</span>
+				 </el-card>				 
 			</el-col>
+			
+			
 			 <el-col :span="8">
 				<el-card shadow="hover">
 					 <div class="crumbs">
@@ -38,9 +44,6 @@
 					&nbsp;<span style="color: red;" >{{rate}}个哆咪豆抵扣1块钱</span>
 				</el-card>
 			</el-col>
-			
-			
-			
         </el-row>
 		
 		<el-row :gutter="19" >
@@ -76,6 +79,18 @@
 			</el-col>
 		</el-row>
 		
+		<el-row :gutter="19">
+			<el-col :span="8">
+				<el-card shadow="hover">
+					 <div class="crumbs">
+						<el-button type="primary" icon="delete" class="handle-del mr10" @click="updateMaxUseDoumidou">修改一次支付最多使用哆咪豆</el-button>
+					 </div>
+					<el-input placeholder="一次最多可使用最哆咪豆数" v-model="maxUseDoumidou" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;"> </el-input>
+				&nbsp;<span style="color: red;" >一次最多可使用{{maxUseDoumidou}}个哆咪豆</span>
+				</el-card>
+			</el-col>
+		</el-row>
+		
     </div>
 </template>
 
@@ -89,6 +104,7 @@
 				selectDate : '',
 				listUpdateUrl : '/updateConstant/getAllUpdate',
 				updateEndTimeUrl : '/updateConstant/updateEndTime',
+				updateEstimatedTimeOFDeliveryUrl : '/updateConstant/updateEstimatedTimeOFDelivery',
 				updateMaxUseDoumidouUrl : '/updateConstant/updateMaxUseDoumidou',
 				updateRateUrl:'/updateConstant/updateRate',
 				updateRebateRateUrl:'/updateConstant/updateRebateRate',				
@@ -97,6 +113,7 @@
 				comboUrl : 'statistic/combo',
 				foodUrl : 'statistic/food',
 				endTime: '',
+				estimatedTimeOFDelivery:'',
 				rate: '',
 				updateVisible:false,
 				maxUseDoumidou:'',
@@ -214,7 +231,6 @@
 				var vue = this;
 				var reg = /^(20|21|22|23|[0-1]\d):[0-5]\d$/;
 				var regExp = new RegExp(reg);
-				console.log(vue.endTime);
 				if(!regExp.test(vue.endTime)){
 					vue.$message.error("请选择正确时间");
 					vue.handleListener();
@@ -234,6 +250,40 @@
 					vue.$util.axiosErrorHandler(err,vue);
 				})
 			},
+			
+			updateEstimatedTimeOFDelivery(){
+				var vue = this;
+				var reg = /^(20|21|22|23|[0-1]\d):[0-5]\d$/;
+				var regExp = new RegExp(reg);
+				if(!regExp.test(vue.estimatedTimeOFDelivery)){
+					vue.$message.error("请选择正确时间");
+					vue.handleListener();
+					return;
+				}
+				var finalUrl = this.updateEstimatedTimeOFDeliveryUrl+"?estimatedTimeOFDelivery="+vue.estimatedTimeOFDelivery+":00";
+				vue.$jsonAxios.get(finalUrl).then(function(response){
+					//这里只能说明返回的状态码是以2开头的.
+					var responseData = response.data;
+					if(vue.$util.checkIfDataSuccess(responseData)){
+						vue.$message.success("修改成功！");
+						vue.handleListener();						
+					}else
+						vue.$message.error("错误码：" + responseData.code + " " + responseData.message);
+				}).catch(function(err){
+					//console.log(err);
+					vue.$util.axiosErrorHandler(err,vue);
+				})
+			},
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			updateMaxUseDoumidou(){
 				var vue = this;
 				if(vue.maxUseDoumidou == ""){
@@ -394,6 +444,7 @@
 					vue.rebateRate = vue.lists.rebateRate;
 					vue.maxAcceptableDistance = vue.lists.maxAcceptableDistance;
 					vue.newCustomerFlagPrice = vue.lists.newCustomerFlagPrice;
+					vue.estimatedTimeOFDelivery = vue.lists.estimatedTimeOFDelivery;
 			   	}else
 			   		vue.$message.error("错误码：" + data.code + " " + data.message);
 			   }).catch(function(err){

@@ -54,6 +54,11 @@ export default new Router({
 				    component: resolve => require(['../components/page/updateConstant.vue'], resolve),
 				    meta: { title: '常用变量' }
 				},
+				{
+				    path: 'feedBack',
+				    component: resolve => require(['../components/page/feedBack.vue'], resolve),
+				    meta: { title: '意见与反馈' }
+				},
                 /* {
                     path: '/icon',
                     component: resolve => require(['../components/page/Icon.vue'], resolve),

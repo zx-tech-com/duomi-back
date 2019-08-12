@@ -14,7 +14,13 @@
 				<el-table-column prop="district" label="区(县)" align="center" width="140"></el-table-column>
 				<el-table-column prop="street" label="街道" align="center" width="140"></el-table-column>
 				<el-table-column prop="address" label="具体地址" align="center" ></el-table-column>
-            </el-table>
+				<el-table-column label="操作"  align="center">
+				    <template slot-scope="scope">
+				        <!-- <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
+				        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+				    </template>
+				</el-table-column>
+			</el-table>
         </div>
 
 		<!-- 编辑弹出框 -->
@@ -123,7 +129,7 @@
 				
 				url : 'address/listCustomerPlace',
 				editUrl : 'slideShow/updateSlideShow',
-				delUrl : 'slideShow/deleteSlideShow',
+				delUrl : 'address/deleteCustomerPlace',
 				addUrl : 'slideShow/addSlideShow',
 				banners : [],
 				customerPlaces : [],
@@ -266,6 +272,7 @@
 				var url = vue.delUrl + "?id=" + vue.waitToDel.id;
 				vue.$jsonAxios.get(url).then(function(response){
 					vue.$util.signleDeleteSuccessHandler(response,vue,"banners",vue.waitToDel.idx);
+					vue.getCustomerPlacesList();
 					vue.delVisible = false;
 				}).catch(function(error){
 					vue.$util.axiosErrorHandler(error);
